@@ -34,6 +34,7 @@
         "./*"
       ],
       "libs/*": ["./libs/*"],
+      "components/*": ["./components/*"],
       "models/*": ["./models/*"]
     },
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */

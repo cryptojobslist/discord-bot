@@ -1,4 +1,4 @@
-import dbConnect from 'libs/database'
+import dbConnect from 'components/database'
 import { Types } from 'mongoose'
 import Guild from 'models/Guild'
 
