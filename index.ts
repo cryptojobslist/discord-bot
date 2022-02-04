@@ -80,7 +80,7 @@ export default async function main() {
     console.log(`Live in ${guilds.size} guild(s):`)
     client.guilds.cache.forEach(async guild => {
       const defaultChannel = GetDefaultChannel(guild)
-      console.log(guild.name, '#' + defaultChannel.name, '(' + defaultChannel.id + ')')
+      console.log(guild.name, '\t', '#' + defaultChannel.name, '(' + defaultChannel.id + ')')
     })
   } catch (err) {
     console.error(`Couldn't start`, err)
