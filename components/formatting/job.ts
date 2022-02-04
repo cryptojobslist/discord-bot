@@ -33,6 +33,7 @@ export default function (job: Job) {
     ${jobLocation} ${salaryRange(job)}
 
     👇 Apply now or share with a friend:
-    [${job.canonicalURL}](${job.canonicalURL}?utm_source=DiscordBot&utm_medium=social)
+    ${job.canonicalURL}?utm_source=DiscordBot&utm_medium=social
   `.replace(/^ +/gm, '')
+  // [${job.canonicalURL}](${job.canonicalURL}?utm_source=DiscordBot&utm_medium=social)
 }
