@@ -1,14 +1,16 @@
-import { Guild } from 'discord.js'
+import { Guild, GuildChannel } from 'discord.js'
 
-export default async function (guild: any) {
-  if (guild.channels.has(guild.id)) {
-    return guild.channels.get(guild.id)
-  }
-  if (guild.channels.exists('name', 'general')) {
-    return guild.channels.find('name', 'general')
-  }
-  return guild.channels
-    .filter(c => c.type === 'text' && c.permissionsFor(guild.client.user).has('SEND_MESSAGES'))
-    .sort((a, b) => a.position - b.position || a.id - b.id)
-    .first()
+export default function (guild: Guild): GuildChannel {
+  const generalOrWelcome = guild.channels.cache
+    .filter(c => c.type === 'GUILD_TEXT' && c.permissionsFor(guild.client.user as any).has('SEND_MESSAGES'))
+    .find(c => {
+      return /general|welcome/gi.test(c.name)
+    }) as GuildChannel
+
+  const FirstChannelWithPermissions = guild.channels.cache
+    .filter(c => c.type === 'GUILD_TEXT' && c.permissionsFor(guild.client.user as any).has('SEND_MESSAGES'))
+    .sort((a: any, b: any) => a.position - b.position || a.id - b.id)
+    .first() as GuildChannel
+
+  return generalOrWelcome || FirstChannelWithPermissions
 }
