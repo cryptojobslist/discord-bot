@@ -1,4 +1,6 @@
-module.exports = async guild => {
+import { Guild } from 'discord.js'
+
+export default async function (guild: any) {
   if (guild.channels.has(guild.id)) {
     return guild.channels.get(guild.id)
   }

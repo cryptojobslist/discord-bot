@@ -2,11 +2,20 @@ require('dotenv').config()
 import { Client, Intents } from 'discord.js'
 import dbConnect from './components/database'
 import Guild from './models/Guild'
-
 import HelpCommand from './commands/help'
+import PromoteNewJob from './components/promote-new-job'
+
+import express from 'express'
+const PORT = process.env.PORT || 3000
+const app = express()
+import bodyParser from 'body-parser'
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
+app.use(bodyParser.raw())
 
 export default async function main() {
   console.log('Starting bot...')
+
   await dbConnect
   try {
     const client = new Client({
@@ -14,7 +23,7 @@ export default async function main() {
     })
 
     client.on('message', async message => {
-      console.log(message)
+      // console.log(message)
       if (
         message.content.includes('set channel') &&
         message.mentions.users.has(process.env.BOT_ID as string) &&
@@ -57,6 +66,14 @@ export default async function main() {
 
     await client.login(process.env.BOT_TOKEN)
     console.log('Bot is running...')
+
+    app.all('/new-job', (req, res) => {
+      const newJob = { ...req.body, ...req.query }
+      PromoteNewJob(newJob, client)
+      res.status(200).send(newJob)
+    })
+
+    app.listen(PORT, () => console.log(`Server started on ${PORT}.`))
 
     const guilds = await client.guilds.fetch()
     console.log({ guilds })
