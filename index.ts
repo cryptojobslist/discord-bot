@@ -5,6 +5,7 @@ import Guild from './models/Guild'
 import HelpCommand from './commands/help'
 import PromoteNewJob from './components/promoteNewJob'
 import GetDefaultChannel from './components/getDefaultChannel'
+import WelcomeMessage from './components/formatting/welcome'
 
 import express from 'express'
 const PORT = process.env.PORT || 3000
@@ -50,11 +51,12 @@ export default async function main() {
     })
 
     client.on('ready', () => console.log(`Logged in as ${client.user!.tag}!`))
-    client.on('guildCreate', event => {
-      console.log('guild created', event)
+    client.on('guildCreate', (guild: any) => {
+      console.log('guild created', guild)
+      guild.channels.cache.get(GetDefaultChannel(guild).id)!.send(WelcomeMessage(guild))
     })
-    client.on('guildDelete', event => {
-      console.log('guild deleted', event)
+    client.on('guildDelete', guild => {
+      console.log('guild deleted', guild)
     })
 
     client.on('interactionCreate', async interaction => {
