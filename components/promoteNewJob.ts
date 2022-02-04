@@ -21,7 +21,8 @@ export default async function PromoteNewJob(_job: Job, client: any) {
   }
 
   const message = FormatJobMessage(job)
-  await client.guilds.fetch()
+  const guilds = await client.guilds.fetch()
+  console.log(`Promoting to ${guilds.size} guild(s).`)
   client.guilds.cache.forEach(async guild => {
     const guildConfig = await Guild.findOne({ id: guild.id })
 
