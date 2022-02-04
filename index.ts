@@ -6,16 +6,9 @@ import HelpCommand from './commands/help';
 config({path: process.env.NODE_ENV === "dev" ? "./.env.dev":"./.env.prod"});
 
 export default async function main() {
-  
   try {
     await dbConnect();
-    console.log("Connected to database");
-  }catch{
-    console.log("Error connecting to database");
-    process.exit(1);
-  }
-
-  try {
+    
     const client = new Client({
       intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
     })
@@ -47,8 +40,8 @@ export default async function main() {
     })
 
     client.on('ready', () => console.log(`Logged in as ${client.user!.tag}!`))
-    client.on('guildCreate', console.log)
-    client.on('guildDelete', console.log)
+    client.on('guildCreate', console.log);
+    client.on('guildDelete', console.log);
 
     client.on('interactionCreate', async interaction => {
       if (!interaction.isCommand()) return
@@ -61,15 +54,13 @@ export default async function main() {
         await interaction.reply('Boop!')
       }
     })
-
-    await client.login(process.env.BOT_TOKEN)
-    console.log('Bot is running...')
-
-    const guilds = await client.guilds.fetch()
+    await client.login(process.env.BOT_TOKEN);
+    console.log('Bot is running...');
+    const guilds = await client.guilds.fetch();
     console.log({ guilds })
   } catch (err) {
-    console.error(`Couldn't start`, err)
-    return undefined
+    console.error(`Couldn't start`, err);
+    process.exit(1);
   }
 }
 
