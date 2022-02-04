@@ -7,11 +7,9 @@ async function dbConnect() {
   if (mongoose.connection.readyState >= 1) return
   console.log(`Connecting to ${process.env.NODE_ENV} database...`)
   try{
-    await  mongoose.connect(process.env.MONGO_URL)
-    console.log('Connected to database!');
+    await  mongoose.connect(process.env.MONGO_URL);
   }catch(err){
-    console.log("Error connecting to database",err);
-    process.exit(1);
+    throw `Error connecting to database: ${err}`; 
   }
 }
 

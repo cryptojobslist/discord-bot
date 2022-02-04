@@ -6,7 +6,15 @@ import HelpCommand from './commands/help';
 config({path: process.env.NODE_ENV === "dev" ? "./.env.dev":"./.env.prod"});
 
 export default async function main() {
-  await dbConnect();
+  
+  try {
+    await dbConnect();
+    console.log("Connected to database");
+  }catch{
+    console.log("Error connecting to database");
+    process.exit(1);
+  }
+
   try {
     const client = new Client({
       intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
