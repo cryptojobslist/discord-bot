@@ -51,9 +51,10 @@ export default async function main() {
     })
 
     client.on('ready', () => console.log(`Logged in as ${client.user!.tag}!`))
-    client.on('guildCreate', (guild: any) => {
+    client.on('guildCreate', async (guild: any) => {
       console.log('guild created', guild)
-      guild.channels.cache.get(GetDefaultChannel(guild).id)!.send(WelcomeMessage(guild))
+      await guild.channels.cache.get(GetDefaultChannel(guild).id)!.send(WelcomeMessage(guild))
+      console.log('welcome message sent')
     })
     client.on('guildDelete', guild => {
       console.log('guild deleted', guild)

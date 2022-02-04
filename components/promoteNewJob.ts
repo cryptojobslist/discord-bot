@@ -21,8 +21,7 @@ export default async function PromoteNewJob(_job: Job, client: any) {
   }
 
   const message = FormatJobMessage(job)
-  const guilds = await client.guilds.fetch()
-  console.log(`Promoting to ${guilds.size} guild(s).`)
+  await client.guilds.fetch()
   client.guilds.cache.forEach(async guild => {
     const guildConfig = await Guild.findOne({ id: guild.id })
 
@@ -30,10 +29,17 @@ export default async function PromoteNewJob(_job: Job, client: any) {
     const defaultChannel: string = guildConfig?.channelId || fallbackChannel
 
     try {
-      client.channels.cache.get(defaultChannel)!.send(message)
+      await guild.channels.cache.get(defaultChannel).send(message)
+      console.log('sent job to', guild.name)
     } catch (err) {
       console.error(`Failed to send to defaultChannel`, err)
-      client.channels.cache.get(fallbackChannel)!.send(message)
+      try {
+        await guild.channels.cache.get(fallbackChannel).send(message)
+        console.log('sent job to', guild.name)
+      } catch (err2) {
+        console.error(`Failed to send to fallbackChannel`, err2)
+        console.error(`Failed guild:`, guild.name, { defaultChannel, fallbackChannel })
+      }
     }
   })
 }
