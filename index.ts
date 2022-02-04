@@ -3,7 +3,8 @@ import { Client, Intents } from 'discord.js'
 import dbConnect from './components/database'
 import Guild from './models/Guild'
 import HelpCommand from './commands/help'
-import PromoteNewJob from './components/promote-new-job'
+import PromoteNewJob from './components/promoteNewJob'
+import GetDefaultChannel from './components/getDefaultChannel'
 
 import express from 'express'
 const PORT = process.env.PORT || 3000
@@ -76,7 +77,11 @@ export default async function main() {
     app.listen(PORT, () => console.log(`Server started on ${PORT}.`))
 
     const guilds = await client.guilds.fetch()
-    console.log({ guilds })
+    console.log(`Live in ${guilds.size} guild(s):`)
+    client.guilds.cache.forEach(async guild => {
+      const defaultChannel = GetDefaultChannel(guild)
+      console.log(guild.name, '#' + defaultChannel.name, '(' + defaultChannel.id + ')')
+    })
   } catch (err) {
     console.error(`Couldn't start`, err)
     return undefined

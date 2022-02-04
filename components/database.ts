@@ -14,7 +14,7 @@ async function dbConnect() {
       // useCreateIndex: true,
     })
     .then(() => {
-      console.log('Connected to database!')
+      console.log('Connected to database.')
     })
     .catch(err => {
       console.error(`Couldn't connect to database`, err)
