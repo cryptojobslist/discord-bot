@@ -25,3 +25,9 @@ export async function fetchJobs(params: filters = {}): Promise<any> {
   const data = (await response.json()) as FindByBidResponse
   return data.data.jobs
 }
+
+export async function fetchOneById(id: string): Promise<Job> {
+  const response = await fetch(`https://api.cryptojobslist.com/job/${id}`)
+  const job = (await response.json()) as Job
+  return job
+}

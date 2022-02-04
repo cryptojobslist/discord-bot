@@ -3,6 +3,7 @@ import { Client } from 'discord.js'
 import Guild from '../models/Guild'
 import FormatJobMessage from './formatting/job'
 import GetDefaultChannel from './getDefaultChannel'
+import { fetchOneById } from './jobsApi'
 
 /**
  * Send a formatted message to each Guild to the selected channel and respect the filter
@@ -11,7 +12,8 @@ import GetDefaultChannel from './getDefaultChannel'
  * @param {Job} job
  * @param {*} client
  */
-export default async function PromoteNewJob(job: Job, client: any) {
+export default async function PromoteNewJob(_job: Job, client: any) {
+  const job = await fetchOneById(_job.id)
   if (process.env.NODE_ENV === 'production') {
     if (!job.jobTitle) throw new Error('Job title is required')
     if (!job.companyName) throw new Error('Company name is required')
