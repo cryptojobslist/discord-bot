@@ -3,7 +3,6 @@ import { Client } from 'discord.js'
 import Guild from '../models/Guild'
 import FormatJobMessage from './formatting/job'
 import GetDefaultChannel from './getDefaultChannel'
-import { fetchJobs } from './jobsApi'
 
 /**
  * Send a formatted message to each Guild to the selected channel and respect the filter
