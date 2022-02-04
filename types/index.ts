@@ -15,6 +15,12 @@ export interface Job {
   bossName: string
   skills: string
   salaryRange: string
+  salary?: {
+    minValue: number
+    maxValue: number
+    currency: string | 'USD'
+    unitText: 'YEAR' | 'MONTH' | 'WEEK' | 'HOUR'
+  }
   paysInFiat: boolean
   paysInCrypto: boolean
 
