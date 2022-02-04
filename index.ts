@@ -50,8 +50,12 @@ export default async function main() {
     })
 
     client.on('ready', () => console.log(`Logged in as ${client.user!.tag}!`))
-    client.on('guildCreate', console.log)
-    client.on('guildDelete', console.log)
+    client.on('guildCreate', event => {
+      console.log('guild created', event)
+    })
+    client.on('guildDelete', event => {
+      console.log('guild deleted', event)
+    })
 
     client.on('interactionCreate', async interaction => {
       if (!interaction.isCommand()) return
