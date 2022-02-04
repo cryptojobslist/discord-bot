@@ -3,5 +3,5 @@
   "watch": ["."],
   "ext": ".ts,.js",
   "ignore": ["*.json"],
-  "exec": "ts-node ./index.ts"
+  "exec": "NODE_ENV=dev ts-node ./index.ts"
 }

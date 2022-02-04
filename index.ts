@@ -1,13 +1,12 @@
-require('dotenv').config()
-import { Client, Intents } from 'discord.js'
-import dbConnect from './components/database'
-import Guild from './models/Guild'
-
-import HelpCommand from './commands/help'
+import{config} from "dotenv";
+import { Client, Intents } from 'discord.js';
+import dbConnect from './components/database';
+import Guild from './models/Guild';
+import HelpCommand from './commands/help';
+config({path: process.env.NODE_ENV === "dev" ? "./.env.dev":"./.env.prod"});
 
 export default async function main() {
-  console.log('Starting bot...')
-  await dbConnect
+  await dbConnect();
   try {
     const client = new Client({
       intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
@@ -16,7 +15,7 @@ export default async function main() {
     client.on('message', async message => {
       console.log(message)
       if (
-        message.content.includes('set channel') &&
+        message.content.includes('set channel') && 
         message.mentions.users.has(process.env.BOT_ID as string) &&
         message.member?.permissions.has('ADMINISTRATOR')
       ) {
