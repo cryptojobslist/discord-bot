@@ -2,8 +2,10 @@ import { Guild, GuildChannel, Permissions } from 'discord.js'
 
 export default function (guild: Guild): GuildChannel {
   const ChannelsWithPermissions = guild.channels.cache
-    .filter(c =>
-      c.permissionsFor(guild.me as any).has([Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.VIEW_CHANNEL])
+    .filter(
+      c =>
+        ['GUILD_TEXT', 'GUILD_NEWS'].includes(c.type) &&
+        c.permissionsFor(guild.me as any).has([Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.VIEW_CHANNEL])
     )
     .sort((a: any, b: any) => a.rawPosition - b.rawPosition || a.id - b.id)
 

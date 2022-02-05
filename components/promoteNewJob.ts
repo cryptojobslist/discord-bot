@@ -2,6 +2,7 @@ import { Job } from 'types'
 import { Client } from 'discord.js'
 import Guild from '../models/Guild'
 import FormatJobMessage from './formatting/job'
+import FormatJobMessageEmbed from './formatting/jobEmbed'
 import GetDefaultChannel from './getDefaultChannel'
 import { fetchOneById } from './jobsApi'
 
@@ -21,7 +22,8 @@ export default async function PromoteNewJob(_job: Job, client: any) {
   }
 
   const message = FormatJobMessage(job)
-  await client.guilds.fetch()
+  const guilds = await client.guilds.fetch()
+  console.log(`Promoting in ${guilds.size} guild(s):`)
   client.guilds.cache.forEach(async guild => {
     const guildConfig = await Guild.findOne({ id: guild.id })
 
@@ -29,13 +31,14 @@ export default async function PromoteNewJob(_job: Job, client: any) {
     const defaultChannel: string = guildConfig?.channelId || fallbackChannel
 
     try {
-      await guild.channels.cache.get(defaultChannel).send(message)
-      console.log('sent job to', guild.name)
+      await guild.channels.cache.get(defaultChannel)!.send(message)
+      // await guild.channels.cache.get(defaultChannel)!.send({ embeds: [FormatJobMessageEmbed(job)] })
+      console.log('Sent job to', guild.name)
     } catch (err) {
       console.error(`Failed to send to defaultChannel`, err)
       try {
-        await guild.channels.cache.get(fallbackChannel).send(message)
-        console.log('sent job to', guild.name)
+        await guild.channels.cache.get(fallbackChannel)!.send(message)
+        console.log('Sent job to', guild.name)
       } catch (err2) {
         console.error(`Failed to send to fallbackChannel`, err2)
         console.error(`Failed guild:`, guild.name, { defaultChannel, fallbackChannel })
