@@ -6,7 +6,14 @@ export default {
   // fn: async (interaction: Interaction) => {
   fn: async (interaction: any) => {
     await interaction.reply(
-      'For help and feedback, please contact us at <https://cryptojobslist.com/go/discord> or check out and contribute to our git repo <https://github.com/cryptojobslist/discord-bot>'
+      `
+      I'll be sharing latest crypto, web3 and blockchain jobs with you 😉.
+
+      Type \`set channel #channel-name\` to set a different channel for me.
+
+      Check <https://github.com/cryptojobslist/discord-bot> for feedback and feature requests.
+      Or contact us at <https://cryptojobslist.com/go/discord>.
+      `.replace(/^ +/gm, '')
     )
   },
 }

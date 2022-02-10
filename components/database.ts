@@ -14,6 +14,4 @@ async function dbConnect() {
   }
 }
 
-let connectionPromise = dbConnect;
-
-export default connectionPromise
+export default dbConnect;

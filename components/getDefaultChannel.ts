@@ -1,12 +1,17 @@
-module.exports = async guild => {
-  if (guild.channels.has(guild.id)) {
-    return guild.channels.get(guild.id)
-  }
-  if (guild.channels.exists('name', 'general')) {
-    return guild.channels.find('name', 'general')
-  }
-  return guild.channels
-    .filter(c => c.type === 'text' && c.permissionsFor(guild.client.user).has('SEND_MESSAGES'))
-    .sort((a, b) => a.position - b.position || a.id - b.id)
-    .first()
+import { Guild, GuildChannel, Permissions } from 'discord.js'
+
+export default function (guild: Guild): GuildChannel {
+  const ChannelsWithPermissions = guild.channels.cache
+    .filter(
+      c =>
+        ['GUILD_TEXT', 'GUILD_NEWS'].includes(c.type) &&
+        c.permissionsFor(guild.me as any).has([Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.VIEW_CHANNEL])
+    )
+    .sort((a: any, b: any) => a.rawPosition - b.rawPosition || a.id - b.id)
+
+  const generalOrWelcome = ChannelsWithPermissions.find(c => {
+    return /general|welcome|jobs|job|career|work/gi.test(c.name)
+  }) as GuildChannel
+
+  return generalOrWelcome || ChannelsWithPermissions.first()
 }
