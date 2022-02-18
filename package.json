@@ -50,6 +50,6 @@
     "typescript": "^4.5.5"
   },
   "engines": {
-    "node": ">=16"
+    "node": "16.x"
   }
 }
