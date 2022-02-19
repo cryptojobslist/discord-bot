@@ -27,8 +27,10 @@ export default async function PromoteNewJob(_job: Job, client: any) {
   client.guilds.cache.forEach(async guild => {
     const guildConfig = await Guild.findOne({ id: guild.id })
 
-    const fallbackChannel = GetDefaultChannel(guild).id
+    const fallbackChannel = GetDefaultChannel(guild)?.id
     const defaultChannel: string = guildConfig?.channelId || fallbackChannel
+
+    if (!defaultChannel && !fallbackChannel) return
 
     try {
       await guild.channels.cache.get(defaultChannel)!.send(message)
