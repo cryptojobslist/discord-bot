@@ -23,7 +23,11 @@ export default async function PromoteNewJob(_job: Job, client: any) {
 
   const message = FormatJobMessage(job)
   const guilds = await client.guilds.fetch()
-  console.log(`Promoting in ${guilds.size} guild(s):`)
+  console.log(
+    `Promoting in ${guilds.size} guild(s).
+    ${job.id}\t ${job.jobTitle} - ${job.companyName} - ${job.canonicalURL}:
+  `.replace(/^\s+/g, '')
+  )
   client.guilds.cache.forEach(async guild => {
     const guildConfig = await Guild.findOne({ id: guild.id })
 
