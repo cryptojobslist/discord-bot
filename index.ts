@@ -84,11 +84,13 @@ export default async function main() {
     app.listen(PORT, () => console.log(`Server started on ${PORT}.`))
 
     const guilds = await client.guilds.fetch()
-    console.log(`Live in ${guilds.size} guild(s):`)
+    let totalAudience = 0
     client.guilds.cache.forEach(async guild => {
       const defaultChannel = GetDefaultChannel(guild)
       console.log(guild.memberCount, guild.name, '\t', '#' + defaultChannel?.name, '(' + defaultChannel?.id + ')')
+      totalAudience += guild.memberCount
     })
+    console.log(`^ Live in ${guilds.size} guild(s). ${totalAudience} total audience.`)
   } catch (err) {
     console.error(`Couldn't start`, err)
     return undefined

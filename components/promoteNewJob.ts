@@ -21,13 +21,9 @@ export default async function PromoteNewJob(_job: Job, client: any) {
     if (!(job.bitlyLink || job.canonicalURL)) throw new Error('Job URL is required')
   }
 
+  let totalAudience = 0
   const message = FormatJobMessage(job)
   const guilds = await client.guilds.fetch()
-  console.log(
-    `Promoting in ${guilds.size} guild(s).
-    ${job.id}\t ${job.jobTitle} - ${job.companyName} - ${job.canonicalURL}:
-  `.replace(/^\s+/g, '')
-  )
   client.guilds.cache.forEach(async guild => {
     const guildConfig = await Guild.findOne({ id: guild.id })
 
@@ -40,15 +36,23 @@ export default async function PromoteNewJob(_job: Job, client: any) {
       await guild.channels.cache.get(defaultChannel)!.send(message)
       // await guild.channels.cache.get(defaultChannel)!.send({ embeds: [FormatJobMessageEmbed(job)] })
       console.log('Sent job to', guild.name)
+      totalAudience += guild.memberCount
     } catch (err) {
       console.error(`Failed to send to defaultChannel`, err)
       try {
         await guild.channels.cache.get(fallbackChannel)!.send(message)
         console.log('Sent job to', guild.name)
+        totalAudience += guild.memberCount
       } catch (err2) {
         console.error(`Failed to send to fallbackChannel`, err2)
         console.error(`Failed guild:`, guild.name, { defaultChannel, fallbackChannel })
       }
     }
   })
+  console.log(
+    `Promoted in ${guilds.size} guild(s).
+    ~${totalAudience} audience.
+    ${job.id}\t ${job.jobTitle} - ${job.companyName} - ${job.canonicalURL}:
+  `.replace(/^\s+/g, '')
+  )
 }
