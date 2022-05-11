@@ -81,6 +81,10 @@ export default async function main() {
       res.status(200).send(newJob)
     })
 
+    app.all('/_health', (req, res) => {
+      res.status(200).send('OK')
+    })
+
     app.listen(PORT, () => console.log(`Server started on ${PORT}.`))
 
     const guilds = await client.guilds.fetch()
