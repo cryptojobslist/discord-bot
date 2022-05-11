@@ -92,7 +92,7 @@ export default async function main() {
     client.guilds.cache.forEach(async guild => {
       const defaultChannel = GetDefaultChannel(guild)
       console.log(guild.memberCount, guild.name, '\t', '#' + defaultChannel?.name, '(' + defaultChannel?.id + ')')
-      totalAudience += guild.memberCount
+      totalAudience += guild?.memberCount || 0
     })
     console.log(`^ Live in ${guilds.size} guild(s). ${totalAudience} total audience.`)
   } catch (err) {
