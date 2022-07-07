@@ -1,4 +1,4 @@
-# 💼 Receive latest Crypto & Web3 Jobs in your Discord Server 
+# 💼 Receive latest Crypto & Web3 Jobs in your Discord
 
 [Add to Discord](https://discordapp.com/api/oauth2/authorize?client_id=458880791573954570&permissions=2048&scope=bot)
 
@@ -22,8 +22,9 @@
 
 
 ## Security
-- This bot can only send messages
-- This bot **can not** read messages, manage channels, cannot do anything else. It can't even read it's own messages!
-- It's open source. When in doubt — read the code.
+- This bot can only Send Messages.
+- This bot only sends messaged in the format depicted in the screenshot above.
+- This bot **can't** do anything else: can't read messaged, can't manage channels, etc. It can't even read it's own messages.
+- It's open source. When in doubt — read the code, ask questions, leave comments offer suggestions.
 
 ![image](https://user-images.githubusercontent.com/936436/177791748-460ae633-167c-40f7-92b0-fbba696e54f2.png)
