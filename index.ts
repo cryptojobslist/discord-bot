@@ -1,5 +1,4 @@
 require('dotenv').config()
-import _pick from 'lodash/pick'
 import { Client, Intents } from 'discord.js'
 import dbConnect from './components/database'
 import Guild from './models/Guild'
@@ -8,6 +7,7 @@ import PromoteNewJob from './components/promoteNewJob'
 import GetDefaultChannel from './components/getDefaultChannel'
 import WelcomeMessage from './components/formatting/welcome'
 import notifyWebhook from './components/notifyWebhook'
+import guildsTable from './components/guildsTable'
 
 import express from 'express'
 const PORT = process.env.PORT || 3000
@@ -88,20 +88,12 @@ export default async function main() {
       res.status(200).send('OK')
     })
 
-    app.all('/channels', async (req, res) => {
-      await client.guilds.fetch()
-      const data = client.guilds.cache
-        .map(guild => _pick(guild, ['id', 'name', 'description', 'vanityURLCode', 'memberCount', 'joinedTimestamp']))
-        .sort(obj => obj.joinedTimestamp)
-      // res.status(200).send(client.guilds.cache)
-      res.status(200).send(data)
-    })
+    app.all('/channels', async (req, res) => guildsTable(req, res, client))
 
     app.listen(PORT, () => console.log(`Server started on ${PORT}.`))
 
     let totalAudience = 0
     const guilds = await client.guilds.fetch()
-    console.log('guilds fetched', guilds)
     client.guilds.cache.forEach(async guild => {
       const defaultChannel = GetDefaultChannel(guild)
       console.log(guild.memberCount, guild.name, '\t', '#' + defaultChannel?.name, '(' + defaultChannel?.id + ')')
