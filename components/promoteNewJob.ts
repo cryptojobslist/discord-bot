@@ -37,6 +37,10 @@ export default async function PromoteNewJob(_job: Job, client: any) {
       // await guild.channels.cache.get(defaultChannel)!.send({ embeds: [FormatJobMessageEmbed(job)] })
       console.log('Sent job to', guild.name)
       totalAudience += guild.memberCount
+      await Guild.updateOne(
+        { id: guild.id },
+        { members: guild.memberCount, guildName: guild.name, guildURL: guild.iconURL }
+      )
     } catch (err) {
       console.error(`Failed to send to defaultChannel`, err)
       try {

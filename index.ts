@@ -1,4 +1,5 @@
 require('dotenv').config()
+import _pick from 'lodash/pick'
 import { Client, Intents } from 'discord.js'
 import dbConnect from './components/database'
 import Guild from './models/Guild'
@@ -83,6 +84,15 @@ export default async function main() {
 
     app.all('/_health', (req, res) => {
       res.status(200).send('OK')
+    })
+
+    app.all('/channels', async (req, res) => {
+      await client.guilds.fetch()
+      const data = client.guilds.cache.map(guild =>
+        _pick(guild, ['id', 'name', 'description', 'vanityURLCode', 'memberCount', 'joinedTimestamp'])
+      )
+      // res.status(200).send(client.guilds.cache)
+      res.status(200).send(data)
     })
 
     app.listen(PORT, () => console.log(`Server started on ${PORT}.`))
