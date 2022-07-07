@@ -7,6 +7,7 @@ import HelpCommand from './commands/help'
 import PromoteNewJob from './components/promoteNewJob'
 import GetDefaultChannel from './components/getDefaultChannel'
 import WelcomeMessage from './components/formatting/welcome'
+import notifyWebhook from './components/notifyWebhook'
 
 import express from 'express'
 const PORT = process.env.PORT || 3000
@@ -56,6 +57,7 @@ export default async function main() {
       console.log('guild created', guild)
       await guild.channels.cache.get(GetDefaultChannel(guild).id)!.send(WelcomeMessage(guild))
       console.log('welcome message sent')
+      await notifyWebhook(guild)
     })
     client.on('guildDelete', guild => {
       console.log('guild deleted', guild)
@@ -88,9 +90,9 @@ export default async function main() {
 
     app.all('/channels', async (req, res) => {
       await client.guilds.fetch()
-      const data = client.guilds.cache.map(guild =>
-        _pick(guild, ['id', 'name', 'description', 'vanityURLCode', 'memberCount', 'joinedTimestamp'])
-      )
+      const data = client.guilds.cache
+        .map(guild => _pick(guild, ['id', 'name', 'description', 'vanityURLCode', 'memberCount', 'joinedTimestamp']))
+        .sort(obj => obj.joinedTimestamp)
       // res.status(200).send(client.guilds.cache)
       res.status(200).send(data)
     })
