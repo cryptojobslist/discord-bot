@@ -1,5 +1,5 @@
 import { Job } from 'types'
-import { Client } from 'discord.js'
+import { Client, TextChannel } from 'discord.js'
 import Guild from '../models/Guild'
 import FormatJobMessage from './formatting/job'
 import FormatJobMessageEmbed from './formatting/jobEmbed'
@@ -13,7 +13,7 @@ import { fetchOneById } from './jobsApi'
  * @param {Job} job
  * @param {*} client
  */
-export default async function PromoteNewJob(_job: Job, client: any) {
+export default async function PromoteNewJob(_job: Job, client: Client) {
   const job = await fetchOneById(_job.id)
   if (process.env.NODE_ENV === 'production') {
     if (!job.jobTitle) throw new Error('Job title is required')
@@ -21,50 +21,43 @@ export default async function PromoteNewJob(_job: Job, client: any) {
     if (!(job.bitlyLink || job.canonicalURL)) throw new Error('Job URL is required')
   }
 
+  let activeGuilds = 0
   let totalAudience = 0
   const message = FormatJobMessage(job)
-  const guilds = await client.guilds.fetch()
-  client.guilds.cache.forEach(async guild => {
+  await client.guilds.fetch()
+  for (const guild of client.guilds.cache.values()) {
     const guildConfig = await Guild.findOne({ id: guild.id })
 
-    const fallbackChannel = GetDefaultChannel(guild)?.id
-    const defaultChannel: string = guildConfig?.channelId || fallbackChannel
+    const fallbackChannelID = GetDefaultChannel(guild)?.id
+    const defaultChannelID: string = guildConfig?.channelId || fallbackChannelID
 
-    if (!defaultChannel && !fallbackChannel) return
+    if (!defaultChannelID && !fallbackChannelID)
+      return console.error(`No default channel found for ${guild.name}`, guild)
+
+    const textChannel =
+      ((await client.channels.cache.get(defaultChannelID)) as TextChannel) ||
+      ((await client.channels.cache.get(fallbackChannelID)) as TextChannel)
 
     try {
-      await guild.channels.cache.get(defaultChannel)!.send(message)
-      // await guild.channels.cache.get(defaultChannel)!.send({ embeds: [FormatJobMessageEmbed(job)] })
-      console.log('Sent job', {
+      await textChannel.send(message)
+      totalAudience += textChannel.guild.memberCount
+      activeGuilds += 1
+      console.log('Sent job to', {
         guildName: guild.name,
         memberCount: guild.memberCount,
         jobTitle: job.jobTitle,
         jobLink: job.bitlyLink || job.canonicalURL,
       })
-      totalAudience += guild.memberCount
       await Guild.updateOne(
         { id: guild.id },
-        { members: guild.memberCount, guildName: guild.name, guildURL: guild.iconURL }
+        { members: textChannel.guild.memberCount, guildName: guild.name, guildURL: textChannel.guild.iconURL }
       )
     } catch (err) {
-      console.error(`Failed to send to defaultChannel`, err, guild, job)
-      try {
-        await guild.channels.cache.get(fallbackChannel)!.send(message)
-        console.log('Sent job to fallbackChannel', {
-          guildName: guild.name,
-          fallbackChannel,
-        })
-        totalAudience += guild.memberCount
-      } catch (err2) {
-        console.error(`Failed to send to fallbackChannel`, err2, guild, job)
-        console.error(`Failed guild:`, guild.name, { defaultChannel, fallbackChannel })
-      }
+      console.error(`Error sending job to ${guild.name}`, { guild, textChannel }, err)
     }
-  })
+  }
+
   console.log(
-    `Promoted in ${guilds.size} guild(s).
-    ~${totalAudience} audience.
-    ${job.id}\t ${job.jobTitle} - ${job.companyName} - ${job.canonicalURL}:
-  `.replace(/^\s+/g, '')
+    `Promoted in ${activeGuilds} guild(s). ~${totalAudience} audience. ${job.id}\t ${job.jobTitle} - ${job.companyName} - ${job.canonicalURL}`
   )
 }
