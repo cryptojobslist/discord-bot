@@ -9,6 +9,15 @@ import WelcomeMessage from './components/formatting/welcome'
 import notifyWebhook from './components/notifyWebhook'
 import guildsTable from './components/guildsTable'
 
+import Rollbar from 'rollbar'
+if (process.env.ROLLBAR_TOKEN) {
+  const rollbar = new Rollbar({
+    accessToken: process.env.ROLLBAR_TOKEN,
+    captureUncaught: true,
+    captureUnhandledRejections: true,
+  })
+}
+
 import express from 'express'
 const PORT = process.env.PORT || 3000
 const app = express()
@@ -27,7 +36,6 @@ export default async function main() {
     })
 
     client.on('message', async message => {
-      // console.log(message)
       if (
         message.content.includes('set channel') &&
         message.mentions.users.has(process.env.BOT_ID as string) &&
@@ -54,14 +62,12 @@ export default async function main() {
 
     client.on('ready', () => console.log(`Logged in as ${client.user!.tag}!`))
     client.on('guildCreate', async (guild: any) => {
-      console.log('guild created', guild)
+      console.log(`Guild created: ${guild.name} (${guild.memberCount})`)
       await guild.channels.cache.get(GetDefaultChannel(guild).id)!.send(WelcomeMessage(guild))
-      console.log('welcome message sent')
+      console.log(`Welcome message sent: ${guild.name} (${guild.memberCount})`)
       await notifyWebhook(guild)
     })
-    client.on('guildDelete', guild => {
-      console.log('guild deleted', guild)
-    })
+    client.on('guildDelete', guild => console.log('guild deleted', guild))
 
     client.on('interactionCreate', async interaction => {
       if (!interaction.isCommand()) return
@@ -96,7 +102,7 @@ export default async function main() {
     const guilds = await client.guilds.fetch()
     client.guilds.cache.forEach(async guild => {
       const defaultChannel = GetDefaultChannel(guild)
-      console.log(guild.memberCount, guild.name, '\t', '#' + defaultChannel?.name, '(' + defaultChannel?.id + ')')
+      // console.log(guild.memberCount, guild.name, '\t', '#' + defaultChannel?.name, '(' + defaultChannel?.id + ')')
       totalAudience += guild?.memberCount || 0
     })
     console.log(`^ Live in ${guilds.size} guild(s). ${totalAudience} total audience.`)

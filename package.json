@@ -32,6 +32,7 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
     "rimraf": "^3.0.2",
+    "rollbar": "^2.25.0",
     "ts-mongoose": "^0.0.24",
     "typescript": "^4.7.4"
   },

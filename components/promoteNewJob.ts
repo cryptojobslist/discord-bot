@@ -35,20 +35,28 @@ export default async function PromoteNewJob(_job: Job, client: any) {
     try {
       await guild.channels.cache.get(defaultChannel)!.send(message)
       // await guild.channels.cache.get(defaultChannel)!.send({ embeds: [FormatJobMessageEmbed(job)] })
-      console.log('Sent job to', guild.name)
+      console.log('Sent job', {
+        guildName: guild.name,
+        memberCount: guild.memberCount,
+        jobTitle: job.jobTitle,
+        jobLink: job.bitlyLink || job.canonicalURL,
+      })
       totalAudience += guild.memberCount
       await Guild.updateOne(
         { id: guild.id },
         { members: guild.memberCount, guildName: guild.name, guildURL: guild.iconURL }
       )
     } catch (err) {
-      console.error(`Failed to send to defaultChannel`, err)
+      console.error(`Failed to send to defaultChannel`, err, guild, job)
       try {
         await guild.channels.cache.get(fallbackChannel)!.send(message)
-        console.log('Sent job to', guild.name)
+        console.log('Sent job to fallbackChannel', {
+          guildName: guild.name,
+          fallbackChannel,
+        })
         totalAudience += guild.memberCount
       } catch (err2) {
-        console.error(`Failed to send to fallbackChannel`, err2)
+        console.error(`Failed to send to fallbackChannel`, err2, guild, job)
         console.error(`Failed guild:`, guild.name, { defaultChannel, fallbackChannel })
       }
     }
