@@ -1,5 +1,5 @@
 require('dotenv').config()
-import { Client, Intents } from 'discord.js'
+import { Client, Intents, TextChannel } from 'discord.js'
 import dbConnect from './components/database'
 import Guild from './models/Guild'
 import HelpCommand from './commands/help'
@@ -44,11 +44,18 @@ export default async function main() {
         const guildId = message.guild?.id
         const channelId = message.content.includes('<#') ? message.content.split('<#')[1].replace('>', '') : false
         if (channelId) {
-          await Guild.findOneAndUpdate({ id: guildId }, { channelId }, { new: true, upsert: true })
-          message.reply(`Job notifications will now be sent to <#${channelId}>`)
+          try {
+            const textChannel = (await client.channels.cache.get(channelId)) as TextChannel
+            await textChannel.send(`👋 Heya! I'll be sharing latest jobs in this channel!`)
+            await Guild.findOneAndUpdate({ id: guildId }, { channelId }, { new: true, upsert: true })
+            message.reply(`✅ I'll now be sharing latest  jobs in <#${channelId}> only.`)
+          } catch (err) {
+            message.reply(`❌ Ooops. Please give me permission to **Send Messages** in <#${channelId}> and try again!`)
+          }
         } else {
-          message.reply(`Please tag a channel where you'd like job notifications to be sent to.`)
+          message.reply(`Please tag a channel where you'd like me to share latest jobs.`)
         }
+        return
       }
 
       if (

@@ -1,5 +1,8 @@
 import { Job } from 'types'
-const fetch = require('node-fetch')
+
+import { RequestInfo, RequestInit } from 'node-fetch'
+const fetch = (url: RequestInfo, init?: RequestInit) =>
+  import('node-fetch').then(({ default: fetch }) => fetch(url, init))
 
 interface filters {
   [key: string]: string
@@ -16,7 +19,7 @@ interface FindByBidResponse {
   }
 }
 
-export async function fetchJobs(params: filters = {}): Promise<any> {
+export async function fetchJobs(params: filters = {}): Promise<Job[]> {
   const response = await fetch('https://api.cryptojobslist.com/job/findbybid', {
     method: 'post',
     body: JSON.stringify(params),
