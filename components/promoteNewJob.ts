@@ -28,15 +28,13 @@ export default async function PromoteNewJob(_job: Job, client: Client) {
   for (const guild of client.guilds.cache.values()) {
     const guildConfig = await Guild.findOne({ id: guild.id })
 
-    const fallbackChannelID = GetDefaultChannel(guild)?.id
-    const defaultChannelID: string = guildConfig?.channelId || fallbackChannelID
+    const configuredChID = guildConfig?.channelId as string
+    const textChannel = ((await client.channels.cache.get(configuredChID)) as TextChannel) || GetDefaultChannel(guild)
 
-    if (!defaultChannelID && !fallbackChannelID)
-      return console.error(`No default channel found for ${guild.name}`, guild)
-
-    const textChannel =
-      ((await client.channels.cache.get(defaultChannelID)) as TextChannel) ||
-      ((await client.channels.cache.get(fallbackChannelID)) as TextChannel)
+    if (!textChannel) {
+      console.error(`No default channel found for ${guild.name}`, guild)
+      continue
+    }
 
     try {
       await textChannel.send(message)

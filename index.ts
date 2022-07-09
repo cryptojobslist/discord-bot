@@ -1,7 +1,7 @@
 require('dotenv').config()
-import { Client, Intents, TextChannel } from 'discord.js'
+import { Client, Intents, TextChannel, Guild } from 'discord.js'
 import dbConnect from './components/database'
-import Guild from './models/Guild'
+import GuildModel from './models/Guild'
 import HelpCommand from './commands/help'
 import PromoteNewJob from './components/promoteNewJob'
 import GetDefaultChannel from './components/getDefaultChannel'
@@ -47,7 +47,7 @@ export default async function main() {
           try {
             const textChannel = (await client.channels.cache.get(channelId)) as TextChannel
             await textChannel.send(`👋 Heya! I'll be sharing latest jobs in this channel!`)
-            await Guild.findOneAndUpdate({ id: guildId }, { channelId }, { new: true, upsert: true })
+            await GuildModel.findOneAndUpdate({ id: guildId }, { channelId }, { new: true, upsert: true })
             message.reply(`✅ I'll now be sharing latest  jobs in <#${channelId}> only.`)
           } catch (err) {
             message.reply(`❌ Ooops. Please give me permission to **Send Messages** in <#${channelId}> and try again!`)
@@ -67,14 +67,30 @@ export default async function main() {
       }
     })
 
-    client.on('ready', () => console.log(`Logged in as ${client.user!.tag}!`))
-    client.on('guildCreate', async (guild: any) => {
-      console.log(`Guild created: ${guild.name} (${guild.memberCount})`)
-      await guild.channels.cache.get(GetDefaultChannel(guild).id)!.send(WelcomeMessage(guild))
-      console.log(`Welcome message sent: ${guild.name} (${guild.memberCount})`)
-      await notifyWebhook(guild)
+    client.on('ready', async () => {
+      console.log(`Logged in as ${client.user!.tag}!`)
+      let totalAudience = 0
+      const guilds = await client.guilds.fetch()
+      for (const guild of client.guilds.cache.values()) {
+        const defaultChannel = GetDefaultChannel(guild)
+        console.log(guild.memberCount, guild.name, '\t', '#' + defaultChannel?.name, '(' + defaultChannel?.id + ')')
+        totalAudience += guild?.memberCount || 0
+      }
+      console.log(`^ Live in ${guilds.size} guild(s). ${totalAudience} total audience.`)
     })
-    client.on('guildDelete', guild => console.log('guild deleted', guild))
+
+    client.on('guildCreate', async (guild: Guild) => {
+      console.log(`Guild created: ${guild.name} (${guild.memberCount})`)
+      await notifyWebhook(guild)
+      const defaultChannel = await GetDefaultChannel(guild)
+      if (defaultChannel) {
+        await defaultChannel?.send(WelcomeMessage(guild))
+        console.log(`Welcome message sent: ${guild.name} (${guild.memberCount})`)
+      } else {
+        console.warn(`No default channel found: ${guild.name} (${guild.memberCount})`, guild)
+      }
+    })
+    client.on('guildDelete', (guild: Guild) => console.log('guild deleted', guild))
 
     client.on('interactionCreate', async interaction => {
       if (!interaction.isCommand()) return
@@ -104,15 +120,6 @@ export default async function main() {
     app.all('/channels', async (req, res) => guildsTable(req, res, client))
 
     app.listen(PORT, () => console.log(`Server started on ${PORT}.`))
-
-    let totalAudience = 0
-    const guilds = await client.guilds.fetch()
-    client.guilds.cache.forEach(async guild => {
-      const defaultChannel = GetDefaultChannel(guild)
-      // console.log(guild.memberCount, guild.name, '\t', '#' + defaultChannel?.name, '(' + defaultChannel?.id + ')')
-      totalAudience += guild?.memberCount || 0
-    })
-    console.log(`^ Live in ${guilds.size} guild(s). ${totalAudience} total audience.`)
   } catch (err) {
     console.error(`Couldn't start`, err)
     return undefined
