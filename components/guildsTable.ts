@@ -11,12 +11,22 @@ export default async function guildsTable(req: Request, res: Response, client: C
 
   await client.guilds.fetch()
   const data = client.guilds.cache
+    .sort((a, b) => b.joinedTimestamp - a.joinedTimestamp)
     .map(guild => _pick(guild, ['joinedTimestamp', 'memberCount', 'name', 'description']))
-    .sort(obj => obj.joinedTimestamp)
+
+  const stats = client.guilds.cache.reduce(
+    (sum, guild) => {
+      sum.memberCount += guild.memberCount
+      sum.serverCount += 1
+      return sum
+    },
+    { memberCount: 0, serverCount: 0 }
+  )
 
   const html =
     `<html>
     <script src="https://cdn.tailwindcss.com"></script>
+    <p class="p-2">Servers: ${stats.serverCount}. Members: ${stats.memberCount}.</p>
     <table class="table-auto">` +
     json2html(data).reduce((sum: string, row: string[]) => {
       return sum + `<tr>` + row.reduce((sum, column) => `${sum}<td class="p-2">${column}</td>`, '') + `</tr>`
