@@ -1,6 +1,8 @@
 # 💼 Receive latest Crypto & Web3 Jobs in your Discord
 
-[Add to Discord](https://discordapp.com/api/oauth2/authorize?client_id=458880791573954570&permissions=2048&scope=bot)
+> Help your community afford your NFTs by getting them a job. Add [this bot](https://discordapp.com/api/oauth2/authorize?client_id=458880791573954570&permissions=2048&scope=bot) to your discord for the best opportunitie.
+
+🤖 [Add to Discord](https://discordapp.com/api/oauth2/authorize?client_id=458880791573954570&permissions=2048&scope=bot)
 
 ## What it looks like
 
