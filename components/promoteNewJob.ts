@@ -45,6 +45,7 @@ export default async function PromoteNewJob(_job: Job, client: Client) {
         memberCount: guild.memberCount,
         jobTitle: job.jobTitle,
         jobLink: job.bitlyLink || job.canonicalURL,
+        textChannel
       })
       await Guild.updateOne(
         { id: guild.id },
