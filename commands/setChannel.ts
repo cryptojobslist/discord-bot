@@ -5,6 +5,7 @@ module.exports = {
   name: 'set-channel',
   description: 'Set the channel for the bot to post in.',
   fn: async (interaction: Interaction) => {
+    console.log('Trying to set channel...')
     // TODO ensure only admins can set channels
     if (interaction.memberPermissions!.has([Permissions.FLAGS.ADMINISTRATOR])) {
       // TODO pick up channel id from message

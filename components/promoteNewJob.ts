@@ -40,12 +40,14 @@ export default async function PromoteNewJob(_job: Job, client: Client) {
       await textChannel.send(message)
       totalAudience += textChannel.guild.memberCount
       activeGuilds += 1
-      console.log('Sent job to', {
+      console.log('Sent job to:', {
         guildName: guild.name,
         memberCount: guild.memberCount,
         jobTitle: job.jobTitle,
         jobLink: job.bitlyLink || job.canonicalURL,
-        textChannel
+        channelName: textChannel.name,
+        channelId: textChannel.id,
+        guildId: textChannel.guild.id,
       })
       await Guild.updateOne(
         { id: guild.id },

@@ -46,9 +46,9 @@ export default async function main() {
         if (channelId) {
           try {
             const textChannel = (await client.channels.cache.get(channelId)) as TextChannel
-            await textChannel.send(`👋 Heya! I'll be sharing latest jobs in this channel!`)
+            await textChannel.send(`👋 Hello everybody! I'll be sharing latest jobs in this channel!`)
             await GuildModel.findOneAndUpdate({ id: guildId }, { channelId }, { new: true, upsert: true })
-            message.reply(`✅ I'll now be sharing latest  jobs in <#${channelId}> only.`)
+            message.reply(`✅ I'll now be sharing latest jobs in <#${channelId}> only.`)
           } catch (err) {
             message.reply(`❌ Ooops. Please give me permission to **Send Messages** in <#${channelId}> and try again!`)
           }
@@ -60,10 +60,9 @@ export default async function main() {
 
       if (
         message.content.includes('help') &&
-        message.member?.permissions.has('ADMINISTRATOR') &&
         message.mentions.users.has(process.env.BOT_ID as string)
       ) {
-        HelpCommand.fn(message)
+        HelpCommand.fn(message, client)
       }
     })
 

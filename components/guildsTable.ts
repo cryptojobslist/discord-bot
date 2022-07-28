@@ -1,8 +1,10 @@
 import { Request, Response } from 'express'
-import { Client } from 'discord.js'
+import { Client, Guild, TextChannel } from 'discord.js'
+import GuildModel from '../models/Guild'
 
 import json2html from 'json-to-table'
 import _pick from 'lodash/pick'
+import GetDefaultChannel from './getDefaultChannel'
 
 export default async function guildsTable(req: Request, res: Response, client: Client) {
   if (!req.query.code || req.query.code !== process.env.ADMIN_SECRET) {
@@ -10,9 +12,18 @@ export default async function guildsTable(req: Request, res: Response, client: C
   }
 
   await client.guilds.fetch()
-  const data = client.guilds.cache
+  const data1 = await Promise.all(
+    client.guilds.cache.map(async (guild: any) => {
+      const guildConfig = await GuildModel.findOne({ id: guild!.id })
+      const currentChannel =
+        ((await client.channels.cache.get(guildConfig?.channelId)) as TextChannel) || GetDefaultChannel(guild)
+      guild.channelName = currentChannel.name
+      return guild
+    })
+  )
+  const data = data1
     .sort((a, b) => b.joinedTimestamp - a.joinedTimestamp)
-    .map(guild => _pick(guild, ['joinedTimestamp', 'memberCount', 'name', 'description']))
+    .map(guild => _pick(guild, ['joinedTimestamp', 'memberCount', 'name', 'channelName', 'description']))
 
   const stats = client.guilds.cache.reduce(
     (sum, guild) => {
