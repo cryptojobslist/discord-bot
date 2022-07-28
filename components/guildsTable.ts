@@ -14,10 +14,14 @@ export default async function guildsTable(req: Request, res: Response, client: C
   await client.guilds.fetch()
   const data1 = await Promise.all(
     client.guilds.cache.map(async (guild: any) => {
-      const guildConfig = await GuildModel.findOne({ id: guild!.id })
-      const currentChannel =
-        ((await client.channels.cache.get(guildConfig?.channelId)) as TextChannel) || GetDefaultChannel(guild)
-      guild.channelName = currentChannel.name
+      try {
+        const guildConfig = await GuildModel.findOne({ id: guild!.id })
+        const currentChannel =
+          ((await client.channels.cache.get(guildConfig?.channelId)) as TextChannel) || GetDefaultChannel(guild)
+        guild.channelName = currentChannel?.name || 'UNDEFINED'
+      } catch (err) {
+        guild.channelName = 'UNDEFINED'
+      }
       return guild
     })
   )

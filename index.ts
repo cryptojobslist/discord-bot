@@ -58,11 +58,9 @@ export default async function main() {
         return
       }
 
-      if (
-        message.content.includes('help') &&
-        message.mentions.users.has(process.env.BOT_ID as string)
-      ) {
+      if (message.content.includes('help') && message.mentions.users.has(process.env.BOT_ID as string)) {
         HelpCommand.fn(message, client)
+        return
       }
     })
 
@@ -72,7 +70,7 @@ export default async function main() {
       const guilds = await client.guilds.fetch()
       for (const guild of client.guilds.cache.values()) {
         const defaultChannel = GetDefaultChannel(guild)
-        console.log(guild.memberCount, guild.name, '\t', '#' + defaultChannel?.name, '(' + defaultChannel?.id + ')')
+        console.log(guild.memberCount, '\t', guild.name, '\t', '#' + defaultChannel?.name, '(' + defaultChannel?.id + ')')
         totalAudience += guild?.memberCount || 0
       }
       console.log(`^ Live in ${guilds.size} guild(s). ${totalAudience} total audience.`)
