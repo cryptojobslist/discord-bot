@@ -72,6 +72,10 @@ export default async function main() {
         const defaultChannel = GetDefaultChannel(guild)
         console.log(guild.memberCount, '\t', guild.name, '\t', '#' + defaultChannel?.name, '(' + defaultChannel?.id + ')')
         totalAudience += guild?.memberCount || 0
+        guild.commands?.create({
+          name: 'ping',
+          description: 'pong',
+        })
       }
       console.log(`^ Live in ${guilds.size} guild(s). ${totalAudience} total audience.`)
     })
