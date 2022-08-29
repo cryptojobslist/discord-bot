@@ -8,6 +8,7 @@ import GetDefaultChannel from './components/getDefaultChannel'
 import WelcomeMessage from './components/formatting/welcome'
 import notifyWebhook from './components/notifyWebhook'
 import guildsTable from './components/guildsTable'
+import InitCommands, { RegisterCommandsInAGuild } from './commands/index'
 
 import Rollbar from 'rollbar'
 if (process.env.ROLLBAR_TOKEN) {
@@ -67,15 +68,13 @@ export default async function main() {
     client.on('ready', async () => {
       console.log(`Logged in as ${client.user!.tag}!`)
       let totalAudience = 0
+      await InitCommands(client)
+
       const guilds = await client.guilds.fetch()
       for (const guild of client.guilds.cache.values()) {
         const defaultChannel = GetDefaultChannel(guild)
-        console.log(guild.memberCount, '\t', guild.name, '\t', '#' + defaultChannel?.name, '(' + defaultChannel?.id + ')')
+        console.log(guild.memberCount, '\t', guild.name, '\t', '#' + defaultChannel?.name, '(' + defaultChannel?.id + ')') // prettier-ignore
         totalAudience += guild?.memberCount || 0
-        guild.commands?.create({
-          name: 'ping',
-          description: 'pong',
-        })
       }
       console.log(`^ Live in ${guilds.size} guild(s). ${totalAudience} total audience.`)
     })
@@ -90,20 +89,9 @@ export default async function main() {
       } else {
         console.warn(`No default channel found: ${guild.name} (${guild.memberCount})`, guild)
       }
+      RegisterCommandsInAGuild(guild)
     })
     client.on('guildDelete', (guild: Guild) => console.log('guild deleted', guild))
-
-    client.on('interactionCreate', async interaction => {
-      if (!interaction.isCommand()) return
-
-      const { commandName } = interaction
-
-      if (commandName === 'ping') {
-        await interaction.reply('Pong!')
-      } else if (commandName === 'beep') {
-        await interaction.reply('Boop!')
-      }
-    })
 
     await client.login(process.env.BOT_TOKEN)
     console.log('Bot is running...')
