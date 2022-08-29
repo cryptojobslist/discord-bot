@@ -1,9 +1,10 @@
 import includeAll from 'include-all'
 import { Client, Guild } from 'discord.js'
 import SetChannel from './setChannel'
+import Help from './help'
 import _find from 'lodash/find'
 
-const commands = [SetChannel]
+const commands = [SetChannel, Help]
 
 export default async function Init(client: Client) {
   // TODO:
@@ -39,7 +40,7 @@ export function RegisterCommandsInAGuild(guild: Guild) {
     guild.commands?.create({
       name: command.name,
       description: command.description,
-      options: command.options,
+      options: (command as any).options || null,
     })
   }
 }

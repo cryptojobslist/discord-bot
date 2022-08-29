@@ -13,8 +13,6 @@ export default {
     },
   ],
   fn: async (interaction: CommandInteraction) => {
-    console.log('Trying to set channel...')
-    console.log(interaction)
     // TODO ensure only admins can set channels
     if (interaction.memberPermissions!.has([Permissions.FLAGS.ADMINISTRATOR])) {
       const guildId = interaction.guild!.id

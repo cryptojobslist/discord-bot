@@ -2,7 +2,7 @@ require('dotenv').config()
 import { Client, Intents, TextChannel, Guild } from 'discord.js'
 import dbConnect from './components/database'
 import GuildModel from './models/Guild'
-import HelpCommand from './commands/help'
+import { HelpMessage } from './commands/help'
 import PromoteNewJob from './components/promoteNewJob'
 import GetDefaultChannel from './components/getDefaultChannel'
 import WelcomeMessage from './components/formatting/welcome'
@@ -60,7 +60,7 @@ export default async function main() {
       }
 
       if (message.content.includes('help') && message.mentions.users.has(process.env.BOT_ID as string)) {
-        HelpCommand.fn(message, client)
+        HelpMessage(message, client)
         return
       }
     })
