@@ -3,7 +3,7 @@
 > Help your community afford your NFTs by getting them a job. Add [this bot](https://discordapp.com/api/oauth2/authorize?client_id=458880791573954570&permissions=2048&scope=bot) to your discord for the best opportunitie.
 
 1. 🤖 [Add to Discord](https://discordapp.com/api/oauth2/authorize?client_id=458880791573954570&permissions=2147485696&scope=bot)
-2. Tell the bot which channel it should send jobs to by typing `@Crypto Jobs List (Web3, Jobs)` `set channel` `#channel-name`
+2. Tell the bot which channel it should send jobs to by typing `/set-channel #channel-name`
 3. Give it permissions to message in that channel. You'll see a confirmation like this:
 <img width="508" alt="image" src="https://user-images.githubusercontent.com/936436/184070787-07938c4c-6232-4b2b-87ff-3e617fe37eee.png">
 
@@ -16,7 +16,7 @@
 
 ## Features
 - Receive real-time notifications about new jobs in crypto/web3
-- Your server mods can select which channel to send these notifications to. Type `@Crypto Jobs List (Web3, Jobs)` `set channel` `#channel-name` to set a different channel. Defaults to `#general`
+- Your server mods can select which channel to send these notifications to. Type `/set-channel #channel-name` to set a different channel. Defaults to `#general`
 - No other features. Super simple!
 - PRs and suggestions are welcome 😅
 

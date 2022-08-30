@@ -1,24 +1,27 @@
-import { Interaction, Permissions } from 'discord.js'
-import Guild from 'models/Guild'
+import { CommandInteraction, Permissions } from 'discord.js'
+import GuildModel from '../models/Guild'
 
-module.exports = {
+export default {
   name: 'set-channel',
   description: 'Set the channel for the bot to post in.',
-  fn: async (interaction: Interaction) => {
-    console.log('Trying to set channel...')
+  options: [
+    {
+      name: 'channel',
+      description: 'Channel name where we should post jobs',
+      required: true,
+      type: 7, // Channel
+    },
+  ],
+  fn: async (interaction: CommandInteraction) => {
     // TODO ensure only admins can set channels
     if (interaction.memberPermissions!.has([Permissions.FLAGS.ADMINISTRATOR])) {
-      // TODO pick up channel id from message
-      const channelId = interaction.memberPermissions
-      const guild = await Guild.updateOne(
-        {
-          id: interaction.guildId,
-          channelId,
-        },
-        {
-          upsert: true,
-        }
-      )
+      const guildId = interaction.guild!.id
+      const selectedChannel = interaction.options.getChannel('channel')
+      const channelId = selectedChannel!.id
+      await GuildModel.updateOne({ id: guildId, channelId }, { upsert: true })
+      return await interaction.reply(`✅ I'll now be sharing latest jobs in <#${channelId}> only.`)
     }
+
+    return await interaction.reply('Setting a channel…')
   },
 }
