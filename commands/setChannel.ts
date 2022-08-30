@@ -13,15 +13,20 @@ export default {
     },
   ],
   fn: async (interaction: CommandInteraction) => {
-    // TODO ensure only admins can set channels
     if (interaction.memberPermissions!.has([Permissions.FLAGS.ADMINISTRATOR])) {
       const guildId = interaction.guild!.id
       const selectedChannel = interaction.options.getChannel('channel')
       const channelId = selectedChannel!.id
-      await GuildModel.updateOne({ id: guildId, channelId }, { upsert: true })
-      return await interaction.reply(`✅ I'll now be sharing latest jobs in <#${channelId}> only.`)
-    }
+      try {
+        await (selectedChannel as any).send(`👋 Hello everybody! I'll be sharing latest jobs in this channel!`)
 
-    return await interaction.reply('Setting a channel…')
+        await GuildModel.updateOne({ id: guildId, channelId }, { upsert: true })
+        return await interaction.reply(`✅ I'll now be sharing latest jobs in <#${channelId}> only.`)
+      } catch (err) {
+        return await interaction.reply(`❌ Ooops. Please give me permission to **Send Messages** in <#${channelId}> and try again!`)
+      }
+    } else {
+      return await interaction.reply(`Only server admins can use this command to set a channel.`)
+    }
   },
 }
