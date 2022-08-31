@@ -21,9 +21,13 @@ export default {
         await (selectedChannel as any).send(`👋 Hello everybody! I'll be sharing latest jobs in this channel!`)
 
         await GuildModel.updateOne({ id: guildId, channelId }, { upsert: true })
-        return await interaction.reply(`✅ I'll now be sharing latest jobs in <#${channelId}> only.`)
+        await interaction.reply(`✅ I'll now be sharing latest jobs in <#${channelId}> only.`)
+        console.log(`/set-channel Guild: ${interaction.guild!.name}, Channel: ${selectedChannel!.name}`)
+        return
       } catch (err) {
-        return await interaction.reply(`❌ Ooops. Please give me permission to **Send Messages** in <#${channelId}> and try again!`)
+        return await interaction.reply(
+          `❌ Ooops. Please give me permission to **Send Messages** in <#${channelId}> and try again!`
+        )
       }
     } else {
       return await interaction.reply(`Only server admins can use this command to set a channel.`)
