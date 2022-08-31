@@ -5,6 +5,7 @@ import FormatJobMessage from './formatting/job'
 import FormatJobMessageEmbed from './formatting/jobEmbed'
 import GetDefaultChannel from './getDefaultChannel'
 import { fetchOneById } from './jobsApi'
+import DMAdmin from './dmAdminThatBotIsNotWellConfigured'
 
 /**
  * Send a formatted message to each Guild to the selected channel and respect the filter
@@ -33,6 +34,7 @@ export default async function PromoteNewJob(_job: Job, client: Client) {
 
     if (!textChannel) {
       console.error(`No default channel found for ${guild.name}`, guild)
+      await DMAdmin(client, guild)
       continue
     }
 

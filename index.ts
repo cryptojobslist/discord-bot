@@ -9,6 +9,7 @@ import WelcomeMessage from './components/formatting/welcome'
 import notifyWebhook from './components/notifyWebhook'
 import guildsTable from './components/guildsTable'
 import InitCommands, { RegisterCommandsInAGuild } from './commands/index'
+import DMAdmin from './components/dmAdminThatBotIsNotWellConfigured'
 
 import Rollbar from 'rollbar'
 if (process.env.ROLLBAR_TOKEN) {
@@ -87,6 +88,7 @@ export default async function main() {
         await defaultChannel?.send(WelcomeMessage(guild))
         console.log(`Welcome message sent: ${guild.name} (${guild.memberCount})`)
       } else {
+        await DMAdmin(client, guild)
         console.warn(`No default channel found: ${guild.name} (${guild.memberCount})`, guild)
       }
       RegisterCommandsInAGuild(guild)
