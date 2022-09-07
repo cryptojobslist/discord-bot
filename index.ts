@@ -8,6 +8,7 @@ import GetDefaultChannel from './components/getDefaultChannel'
 import WelcomeMessage from './components/formatting/welcome'
 import notifyWebhook from './components/notifyWebhook'
 import guildsTable from './components/guildsTable'
+import badgeN from './components/badgen'
 import InitCommands, { RegisterCommandsInAGuild } from './commands/index'
 import DMAdmin from './components/dmAdminThatBotIsNotWellConfigured'
 
@@ -109,6 +110,7 @@ export default async function main() {
     })
 
     app.all('/channels', async (req, res) => guildsTable(req, res, client))
+    app.all('/badgen', async (req, res) => badgeN(req, res, client))
 
     app.listen(PORT, () => console.log(`Server started on ${PORT}.`))
   } catch (err) {
