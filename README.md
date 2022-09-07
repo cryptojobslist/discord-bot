@@ -1,3 +1,5 @@
+![Current audience across all servers](https://badgen.net/https/discord-bot.cryptojobslist.com/badgen)
+
 # 💼 Receive latest Crypto & Web3 Jobs in your Discord
 > Help your community afford your NFTs by getting them a job! Add [this bot](https://discord.com/oauth2/authorize?client_id=458880791573954570&permissions=2147485696&scope=bot) to your Discord for the best jobs in crypto & web3.
 
