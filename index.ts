@@ -110,7 +110,7 @@ export default async function main() {
     })
 
     app.all('/channels', async (req, res) => guildsTable(req, res, client))
-    app.all('/badgen', async (req, res) => badgeN(req, res, client))
+    app.all('/badgen/:type', async (req, res) => badgeN(req, res, client))
 
     app.listen(PORT, () => console.log(`Server started on ${PORT}.`))
   } catch (err) {

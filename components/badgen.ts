@@ -12,13 +12,13 @@ export default async function badgeN(req: Request, res: Response, client: Client
     { memberCount: 0, serverCount: 0 }
   )
 
-  if (req.query.code === 'servers') {
+  if (req.params.type === 'servers') {
     res.status(200).send({
       subject: 'Servers',
       status: stats.serverCount,
       color: 'blue',
     })
-  } else {
+  } else if (req.params.type === 'members') {
     res.status(200).send({
       subject: 'Members',
       status: Math.round(stats.memberCount / 100) / 10 + 'k+',
