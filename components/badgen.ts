@@ -12,17 +12,20 @@ export default async function badgeN(req: Request, res: Response, client: Client
     { memberCount: 0, serverCount: 0 }
   )
 
+  let result = {}
   if (req.params.type === 'servers') {
-    res.status(200).send({
+    result = {
       subject: 'Servers',
       status: stats.serverCount,
       color: 'blue',
-    })
+    }
   } else if (req.params.type === 'members') {
-    res.status(200).send({
+    result = {
       subject: 'Members',
       status: Math.round(stats.memberCount / 100) / 10 + 'k+',
       color: 'green',
-    })
+    }
   }
+
+  res.set('Cache-control', 'public, max-age=300').status(200).send(result)
 }
