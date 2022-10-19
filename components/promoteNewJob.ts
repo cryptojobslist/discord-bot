@@ -1,6 +1,6 @@
 import { Job } from 'types'
 import { Client, TextChannel } from 'discord.js'
-import Guild from '../models/Guild'
+import GuildModel from '../models/Guild'
 import FormatJobMessage from './formatting/job'
 import FormatJobMessageEmbed from './formatting/jobEmbed'
 import GetDefaultChannel from './getDefaultChannel'
@@ -27,7 +27,7 @@ export default async function PromoteNewJob(_job: Job, client: Client) {
   const message = FormatJobMessage(job)
   await client.guilds.fetch()
   for (const guild of client.guilds.cache.values()) {
-    const guildConfig = await Guild.findOne({ id: guild.id })
+    const guildConfig = await GuildModel.findOne({ id: guild.id })
 
     const configuredChID = guildConfig?.channelId as string
     const textChannel = ((await client.channels.cache.get(configuredChID)) as TextChannel) || GetDefaultChannel(guild)
@@ -51,9 +51,10 @@ export default async function PromoteNewJob(_job: Job, client: Client) {
         channelId: textChannel.id,
         guildId: textChannel.guild.id,
       })
-      await Guild.updateOne(
+      await GuildModel.updateOne(
         { id: guild.id },
-        { members: textChannel.guild.memberCount, guildName: guild.name, guildURL: textChannel.guild.iconURL }
+        { members: textChannel.guild.memberCount, guildName: guild.name },
+        { upsert: true }
       )
     } catch (err) {
       console.error(`Error sending job to ${guild.name}`, { guild, textChannel }, err)

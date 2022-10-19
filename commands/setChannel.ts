@@ -20,9 +20,13 @@ export default {
       try {
         await (selectedChannel as any).send(`👋 Hello everybody! I'll be sharing latest jobs in this channel!`)
 
-        await GuildModel.updateOne({ id: guildId, channelId }, { upsert: true })
+        await GuildModel.updateOne({ id: guildId }, { channelId }, { upsert: true })
         await interaction.reply(`✅ I'll now be sharing latest jobs in <#${channelId}> only.`)
-        console.log(`/set-channel Guild: ${interaction.guild!.name}, Channel: ${selectedChannel!.name}`)
+        console.log(
+          `/set-channel Guild: ${interaction.guild!.name} (${guildId}), Channel: ${
+            selectedChannel!.name
+          } (${channelId})`
+        )
         return
       } catch (err) {
         return await interaction.reply(

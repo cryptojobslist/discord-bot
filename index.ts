@@ -50,7 +50,7 @@ export default async function main() {
           try {
             const textChannel = (await client.channels.cache.get(channelId)) as TextChannel
             await textChannel.send(`👋 Hello everybody! I'll be sharing latest jobs in this channel!`)
-            await GuildModel.findOneAndUpdate({ id: guildId }, { channelId }, { new: true, upsert: true })
+            await GuildModel.updateOne({ id: guildId }, { channelId }, { new: true, upsert: true })
             message.reply(`✅ I'll now be sharing latest jobs in <#${channelId}> only.`)
           } catch (err) {
             message.reply(`❌ Ooops. Please give me permission to **Send Messages** in <#${channelId}> and try again!`)
