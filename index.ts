@@ -112,7 +112,11 @@ export default async function main() {
     app.all('/channels', async (req, res) => guildsTable(req, res, client))
     app.all('/badgen/:type', async (req, res) => badgeN(req, res, client))
 
-    app.listen(PORT, () => console.log(`Server started on ${PORT}.`))
+    const server = app.listen(PORT, () => console.log(`Server started on ${PORT}.`))
+
+    const graceFullShutDown = () => server.close(() => console.warn('HTTP server closed'))
+    process.on('SIGTERM', graceFullShutDown)
+    process.on('SIGINT', graceFullShutDown)
   } catch (err) {
     console.error(`Couldn't start`, err)
     return undefined
