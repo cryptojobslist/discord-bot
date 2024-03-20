@@ -42,22 +42,16 @@ export default async function PromoteNewJob(_job: Job, client: Client) {
       await textChannel.send(message)
       totalAudience += textChannel.guild.memberCount
       activeGuilds += 1
-      console.log('Sent job to:', {
-        guildName: guild.name,
-        memberCount: guild.memberCount,
-        jobTitle: job.jobTitle,
-        jobLink: job.bitlyLink || job.canonicalURL,
-        channelName: textChannel.name,
-        channelId: textChannel.id,
-        guildId: textChannel.guild.id,
-      })
+      console.log(
+        `Sent job to: "${guild.name}"\tMembers: ${guild.memberCount}\tChannel: ${textChannel.name}\tGuildId: ${textChannel.guild.id}\t${job.bitlyLink || job.canonicalURL}`
+      )
       await GuildModel.updateOne(
         { id: guild.id },
         { members: textChannel.guild.memberCount, guildName: guild.name },
         { upsert: true }
       )
     } catch (err) {
-      console.error(`Error sending job to ${guild.name}`, { guild, textChannel }, err)
+      console.error(`Error sending job to ${guild.name} (${guild.id}) Channel: ${textChannel.id}`, err)
     }
   }
 
