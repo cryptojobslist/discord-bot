@@ -34,9 +34,7 @@ export default async function main() {
 
   await dbConnect
   try {
-    const client = new Client({
-      intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
-    })
+    const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] })
 
     client.on('message', async message => {
       if (
@@ -96,8 +94,9 @@ export default async function main() {
     })
     client.on('guildDelete', (guild: Guild) => console.log('guild deleted', guild))
 
+    console.log('Discord login: STARTED')
     await client.login(process.env.BOT_TOKEN)
-    console.log('Bot is running...')
+    console.log('Discord login: DONE')
 
     app.all('/new-job', (req, res) => {
       const newJob = { ...req.body, ...req.query }
@@ -105,12 +104,8 @@ export default async function main() {
       res.status(200).send(newJob)
     })
 
-    app.all('/', (req, res) => {
-      res.status(200).send('OK')
-    })
-    app.all('/_health', (req, res) => {
-      res.status(200).send('OK')
-    })
+    app.all('/', (req, res) => res.status(200).send('OK'))
+    app.all('/_health', (req, res) => res.status(200).send('OK'))
 
     app.all('/channels', async (req, res) => guildsTable(req, res, client))
     app.all('/badgen/:type', async (req, res) => badgeN(req, res, client))
