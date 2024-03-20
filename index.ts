@@ -105,6 +105,9 @@ export default async function main() {
       res.status(200).send(newJob)
     })
 
+    app.all('/', (req, res) => {
+      res.status(200).send('OK')
+    })
     app.all('/_health', (req, res) => {
       res.status(200).send('OK')
     })
