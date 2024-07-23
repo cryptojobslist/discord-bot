@@ -68,9 +68,10 @@ export default async function main() {
     bot.on('ready', async () => {
       console.log(`Logged in as ${bot.user!.tag}!`)
       let totalAudience = 0
+      const guilds = await bot.guilds.fetch({ limit: 1000 })
+
       // await InitCommands(bot)
 
-      const guilds = await bot.guilds.fetch()
       for (const guild of bot.guilds.cache.values()) {
         const defaultChannel = GetDefaultChannel(guild)
         console.log(guild.memberCount, '\t', guild.name, '\t', '#' + defaultChannel?.name, '(' + defaultChannel?.id + ')') // prettier-ignore

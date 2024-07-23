@@ -6,7 +6,7 @@ import _find from 'lodash/find'
 
 const commands = [SetChannel, Help]
 
-export default async function Init(client: Client) {
+export default async function Init(bot: Client) {
   // TODO:
   // const commands = includeAll({
   //   dirname: './commands/*',
@@ -15,12 +15,11 @@ export default async function Init(client: Client) {
   //   optional: true,
   // })
 
-  const guilds = await client.guilds.fetch()
-  for (const guild of client.guilds.cache.values()) {
+  for (const guild of bot.guilds.cache.values()) {
     await RegisterCommandsInAGuild(guild)
   }
 
-  client.on('interactionCreate', async interaction => {
+  bot.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return
 
     try {
@@ -34,16 +33,15 @@ export default async function Init(client: Client) {
   })
 }
 
-export function RegisterCommandsInAGuild(guild: Guild) {
+export async function RegisterCommandsInAGuild(guild: Guild) {
   for (const command of commands) {
     if (!command.name && !command.fn) continue
-    guild.commands
+    await guild.commands
       ?.create({
         name: command.name,
         description: command.description,
         options: (command as any).options || null,
       })
-      .then(() => console.log('Command registered', { command: command.name, guild: guild.name, id: guild.id }))
       .catch(err => console.error('Error registering command', command.name, err))
   }
 }
