@@ -68,7 +68,7 @@ export default async function main() {
     bot.on('ready', async () => {
       console.log(`Logged in as ${bot.user!.tag}!`)
       let totalAudience = 0
-      await InitCommands(bot)
+      // await InitCommands(bot)
 
       const guilds = await bot.guilds.fetch()
       for (const guild of bot.guilds.cache.values()) {
@@ -116,12 +116,16 @@ export default async function main() {
 
     const serverInstance = server.listen(PORT, () => console.log(`Server started on ${PORT}.`))
 
-    const graceFullShutDown = () => serverInstance.close(() => console.warn('HTTP server closed'))
+    async function graceFullShutDown() {
+      serverInstance.close(() => console.warn('HTTP server closed'))
+      await bot.destroy()
+      process.exit(0)
+    }
     process.on('SIGTERM', graceFullShutDown)
     process.on('SIGINT', graceFullShutDown)
   } catch (err) {
     console.error(`Couldn't start`, err)
-    return undefined
+    process.exit(0)
   }
 }
 
