@@ -37,10 +37,13 @@ export default async function Init(client: Client) {
 export function RegisterCommandsInAGuild(guild: Guild) {
   for (const command of commands) {
     if (!command.name && !command.fn) continue
-    guild.commands?.create({
-      name: command.name,
-      description: command.description,
-      options: (command as any).options || null,
-    })
+    guild.commands
+      ?.create({
+        name: command.name,
+        description: command.description,
+        options: (command as any).options || null,
+      })
+      .then(() => console.log('Command registered', { command: command.name, guild: guild.name, id: guild.id }))
+      .catch(err => console.error('Error registering command', command.name, err))
   }
 }
