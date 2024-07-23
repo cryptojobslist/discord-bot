@@ -68,9 +68,9 @@ export default async function main() {
     bot.on('ready', async () => {
       console.log(`Logged in as ${bot.user!.tag}!`)
       let totalAudience = 0
-      const guilds = await bot.guilds.fetch({ limit: 1000 })
+      const guilds = await bot.guilds.fetch({ limit: 200 })
 
-      // await InitCommands(bot)
+      await InitCommands(bot)
 
       for (const guild of bot.guilds.cache.values()) {
         const defaultChannel = GetDefaultChannel(guild)

@@ -15,7 +15,10 @@ export default async function Init(bot: Client) {
   //   optional: true,
   // })
 
-  for (const guild of bot.guilds.cache.values()) {
+  const guilds = bot.guilds.cache.values()
+  console.log(`Registering commands in  guilds...`)
+
+  for (const guild of guilds) {
     await RegisterCommandsInAGuild(guild)
   }
 
@@ -31,6 +34,8 @@ export default async function Init(bot: Client) {
       await interaction.reply(`Something went wrong. Please contact our support.`)
     }
   })
+
+  console.log('Commands registered.')
 }
 
 export async function RegisterCommandsInAGuild(guild: Guild) {
