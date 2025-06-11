@@ -68,8 +68,7 @@ export default async function main() {
     bot.on('ready', async () => {
       console.log(`Logged in as ${bot.user!.tag}!`)
       let totalAudience = 0
-      const guilds = await bot.guilds.fetch({ limit: 200 })
-
+      const guilds = await bot.guilds.fetch()
       await InitCommands(bot)
 
       for (const guild of bot.guilds.cache.values()) {
