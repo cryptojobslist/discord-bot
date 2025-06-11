@@ -19,7 +19,9 @@ export default async function Init(bot: Client) {
   console.log(`Registering commands in  guilds...`)
 
   for (const guild of guilds) {
-    await RegisterCommandsInAGuild(guild)
+    await RegisterCommandsInAGuild(guild).catch(err =>
+      console.error('Error registering commands in guild', guild.id, err)
+    )
   }
 
   bot.on('interactionCreate', async interaction => {
