@@ -68,7 +68,20 @@ export default async function main() {
     bot.on('ready', async () => {
       console.log(`Logged in as ${bot.user!.tag}!`)
       let totalAudience = 0
-      const guilds = await bot.guilds.fetch({ limit: 0 })
+      // Fetch all guilds in pages of 200 (Discord API max)
+      const allGuilds = new Map<string, Guild>()
+      let after: string | undefined = undefined
+      while (true) {
+        const batch = (await bot.guilds.fetch(after ? { limit: 200, after } : { limit: 200 }).catch(console.error)) as
+          | Map<string, Guild>
+          | undefined
+
+        if (!batch?.size) break
+        batch.forEach(g => allGuilds.set(g.id, g))
+        if (batch.size < 200) break // fetched last page
+        after = [...batch.keys()].pop()
+      }
+
       await InitCommands(bot)
 
       for (const guild of bot.guilds.cache.values()) {
@@ -76,7 +89,7 @@ export default async function main() {
         console.log(guild.memberCount, '\t', guild.name, '\t', '#' + defaultChannel?.name, '(' + defaultChannel?.id + ')') // prettier-ignore
         totalAudience += guild?.memberCount || 0
       }
-      console.log(`^ Live in ${guilds.size} guild(s). ${totalAudience} total audience.`)
+      console.log(`^ Live in ${allGuilds.size} guild(s). ${totalAudience} total audience.`)
     })
 
     bot.on('guildCreate', async (guild: Guild) => {
