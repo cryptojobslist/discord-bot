@@ -16,7 +16,7 @@ export default async function Init(bot: Client) {
   // })
 
   const guilds = bot.guilds.cache.values()
-  console.log(`Registering commands in  guilds...`)
+  console.log(`Registering commands in ${bot.guilds.cache.size} guilds...`)
 
   for (const guild of guilds) {
     await RegisterCommandsInAGuild(guild).catch(err =>
