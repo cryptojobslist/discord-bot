@@ -1,6 +1,6 @@
 import { Guild, Permissions, TextChannel } from 'discord.js'
 
-export default function (guild: Guild): TextChannel {
+export default function (guild: Guild): TextChannel | undefined {
   const ChannelsWithPermissions = guild.channels.cache
     .filter(
       channel =>
@@ -17,5 +17,5 @@ export default function (guild: Guild): TextChannel {
     return /general|welcome/gi.test(c.name)
   }) as TextChannel
 
-  return guessJobsChannel || generalOrWelcome || ChannelsWithPermissions.first()
+  return guessJobsChannel || generalOrWelcome || (ChannelsWithPermissions.first() as TextChannel | undefined)
 }

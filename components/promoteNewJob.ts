@@ -2,7 +2,6 @@ import { Job } from 'types'
 import { Client, TextChannel } from 'discord.js'
 import GuildModel from '../models/Guild'
 import FormatJobMessage from './formatting/job'
-import FormatJobMessageEmbed from './formatting/jobEmbed'
 import GetDefaultChannel from './getDefaultChannel'
 import { fetchOneById } from './jobsApi'
 import DMAdmin from './dmAdminThatBotIsNotWellConfigured'
@@ -30,7 +29,7 @@ export default async function PromoteNewJob(_job: Job, client: Client) {
     const guildConfig = await GuildModel.findOne({ id: guild.id })
 
     const configuredChID = guildConfig?.channelId as string
-    const textChannel = ((await client.channels.cache.get(configuredChID)) as TextChannel) || GetDefaultChannel(guild)
+    const textChannel = (client.channels.cache.get(configuredChID) as TextChannel) || GetDefaultChannel(guild)
 
     if (!textChannel) {
       console.error(`No default channel found for ${guild.name}`, guild)

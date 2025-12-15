@@ -1,4 +1,4 @@
-import { CommandInteraction, Message, TextChannel, Client, Guild } from 'discord.js'
+import { Client, CommandInteraction, Message, Guild } from 'discord.js'
 import GuildModel from '../models/Guild'
 import GetDefaultChannel from '../components/getDefaultChannel'
 
@@ -19,7 +19,8 @@ export default {
   fn: async (interaction: CommandInteraction) => {
     const guild = interaction.guild as Guild
     const guildConfig = await GuildModel.findOne({ id: guild!.id })
-    const currentChannelId = guildConfig?.channelId || GetDefaultChannel(guild).id
+    const defaultChannel = GetDefaultChannel(guild)
+    const currentChannelId = guildConfig?.channelId || defaultChannel?.id || 'unknown'
 
     await interaction.reply(getMessage(currentChannelId))
   },
@@ -28,7 +29,8 @@ export default {
 export async function HelpMessage(message: Message, client: Client) {
   const guild = message.guild as Guild
   const guildConfig = await GuildModel.findOne({ id: guild!.id })
-  const currentChannelId = guildConfig?.channelId || GetDefaultChannel(guild).id
+  const defaultChannel = GetDefaultChannel(guild)
+  const currentChannelId = guildConfig?.channelId || defaultChannel?.id || 'unknown'
 
   await message.reply(getMessage(currentChannelId))
 }
