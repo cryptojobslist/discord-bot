@@ -50,7 +50,7 @@
     "ts-node": "^10.8.2"
   },
   "engines": {
-    "node": ">=18.x"
+    "node": ">=18.0.0"
   },
   "jest": {
     "verbose": true,
