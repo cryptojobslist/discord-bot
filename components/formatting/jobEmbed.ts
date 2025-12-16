@@ -3,10 +3,10 @@ import { Job } from 'types'
 import _compact from 'lodash/compact'
 
 function isRemote(job: Job): boolean {
-  if (typeof job.remote === 'undefined') {
-    job.remote = /remote|anywhere|distributed|decentralized/gi.test(job.jobLocation + job.jobTitle)
+  if (typeof job.remote !== 'undefined') {
+    return Boolean(job.remote)
   }
-  return Boolean(job.remote)
+  return /remote|anywhere|distributed|decentralized/gi.test((job.jobLocation || '') + (job.jobTitle || ''))
 }
 
 function salaryRange(job: Job): string {
@@ -28,7 +28,6 @@ export default function (job: Job) {
     return 'Remote'
   })()
 
-  console.log(jobLocation)
   const embed = new MessageEmbed()
     .setColor('#0099ff')
     .setTitle(job.jobTitle)
@@ -41,12 +40,9 @@ export default function (job: Job) {
     // .setDescription(job.jobDescription)
     .setThumbnail(`https://cryptojobslist.com/favicon.png`)
     .addFields(
-      // { name: 'Regular field title', value: 'Some value here' },
-      // { name: '\u200B', value: '\u200B' },
       { name: 'Location:', value: jobLocation, inline: true },
-      { name: 'Category:', value: job.category, inline: true },
-      { name: 'Type:', value: job.employmentType.join(', '), inline: true }
-      // { name: 'Salary range', value: salaryRange(job), inline: false }
+      { name: 'Category:', value: job.category || 'N/A', inline: true },
+      { name: 'Type:', value: job.employmentType?.join(', ') || 'N/A', inline: true }
     )
     // .addField('Inline field title', 'Some value here', true)
     .setImage(`https://lambda-apis.vercel.app/api/ogImage2/${job.id}.png`)

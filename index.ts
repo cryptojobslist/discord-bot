@@ -36,7 +36,7 @@ export default async function main() {
   try {
     const bot = new DiscordClient({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] })
 
-    bot.on('message', async message => {
+    bot.on('messageCreate', async message => {
       if (
         message.content.includes('set channel') &&
         message.mentions.users.has(process.env.BOT_ID as string) &&
@@ -46,7 +46,7 @@ export default async function main() {
         const channelId = message.content.includes('<#') ? message.content.split('<#')[1].replace('>', '') : false
         if (channelId) {
           try {
-            const textChannel = (await bot.channels.cache.get(channelId)) as TextChannel
+            const textChannel = bot.channels.cache.get(channelId) as TextChannel
             await textChannel.send(`👋 Hello everybody! I'll be sharing latest jobs in this channel!`)
             await GuildModel.updateOne({ id: guildId }, { channelId }, { new: true, upsert: true })
             message.reply(`✅ I'll now be sharing latest jobs in <#${channelId}> only.`)
@@ -138,7 +138,7 @@ export default async function main() {
     process.on('SIGINT', graceFullShutDown)
   } catch (err) {
     console.error(`Couldn't start`, err)
-    process.exit(0)
+    process.exit(1)
   }
 }
 

@@ -1,9 +1,7 @@
-export default function (guild) {
-  const {
-    nickname,
-    user: { username },
-  } = guild.me
-  const botNickname = nickname || username
+import { Guild } from 'discord.js'
+
+export default function (guild: Guild) {
+  const botNickname = guild.me?.nickname || guild.me?.user?.username || 'Crypto Jobs Bot'
   return `
     Hi 👋 I'm Crypto Jobs List bot for Discord.
     I'll be sharing latest crypto, web3 and blockchain jobs with you 😉.

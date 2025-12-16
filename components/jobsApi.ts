@@ -1,8 +1,5 @@
 import { Job } from 'types'
-
-import { RequestInfo, RequestInit } from 'node-fetch'
-const fetch = (url: RequestInfo, init?: RequestInit) =>
-  import('node-fetch').then(({ default: fetch }) => fetch(url, init))
+import fetch from 'node-fetch'
 
 interface filters {
   [key: string]: string

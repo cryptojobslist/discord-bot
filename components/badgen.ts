@@ -6,25 +6,25 @@ type Stats = {
   serverCount: number
 }
 
-let cache: { data: Stats | any; createdAt: number } = { data: undefined, createdAt: 0 }
+let cache: { data: Stats | undefined; createdAt: number } = { data: undefined, createdAt: 0 }
+
 async function getStatsWithCache(client: Client): Promise<Stats> {
-  return new Promise(async (resolve) => {
-    if (cache.data) resolve(cache.data)
-    if (!cache.data || Date.now() > cache.createdAt + 10_000) {
-      await client.guilds.fetch()
-      const stats = client.guilds.cache.reduce(
-        (sum, guild) => {
-          sum.memberCount += guild.memberCount
-          sum.serverCount += 1
-          return sum
-        },
-        { memberCount: 0, serverCount: 0 }
-      )
-      cache.data = stats
-      cache.createdAt = Date.now()
-    }
-    resolve(cache.data)
-  })
+  if (cache.data && Date.now() <= cache.createdAt + 10_000) {
+    return cache.data
+  }
+
+  await client.guilds.fetch()
+  const stats = client.guilds.cache.reduce(
+    (sum, guild) => {
+      sum.memberCount += guild.memberCount
+      sum.serverCount += 1
+      return sum
+    },
+    { memberCount: 0, serverCount: 0 }
+  )
+  cache.data = stats
+  cache.createdAt = Date.now()
+  return cache.data
 }
 
 export default async function badgeN(req: Request, res: Response, client: Client) {
