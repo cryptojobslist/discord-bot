@@ -1,4 +1,3 @@
-import includeAll from 'include-all'
 import { Client, Guild } from 'discord.js'
 import SetChannel from './setChannel'
 import Help from './help'
@@ -7,14 +6,6 @@ import _find from 'lodash/find'
 const commands = [SetChannel, Help]
 
 export default async function Init(bot: Client) {
-  // TODO:
-  // const commands = includeAll({
-  //   dirname: './commands/*',
-  //   filter: /(.+)\.js$/,
-  //   excludeDirs: /^\.(git|svn)$/,
-  //   optional: true,
-  // })
-
   const guilds = bot.guilds.cache.values()
   console.log(`Registering commands in ${bot.guilds.cache.size} guilds...`)
 
@@ -42,7 +33,7 @@ export default async function Init(bot: Client) {
 
 export async function RegisterCommandsInAGuild(guild: Guild) {
   for (const command of commands) {
-    if (!command.name && !command.fn) continue
+    if (!command.name || !command.fn) continue
     await guild.commands
       ?.create({
         name: command.name,

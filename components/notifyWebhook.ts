@@ -1,6 +1,7 @@
 import fetch from 'node-fetch'
+import { Guild } from 'discord.js'
 
-export default async function notifyWebhook(guild) {
+export default async function notifyWebhook(guild: Guild) {
   if (process.env.NEW_SERVER_JOINED_HOOK) {
     await fetch(process.env.NEW_SERVER_JOINED_HOOK as string, {
       method: 'post',
@@ -11,17 +12,17 @@ export default async function notifyWebhook(guild) {
             fields: [
               {
                 name: 'Name',
-                value: guild.name,
+                value: guild.name || 'Unknown',
                 inline: true,
               },
               {
                 name: 'Members',
-                value: guild.memberCount,
+                value: String(guild.memberCount),
                 inline: true,
               },
               {
                 name: 'Description',
-                value: guild.description,
+                value: guild.description || 'No description',
                 inline: true,
               },
             ],
@@ -29,7 +30,6 @@ export default async function notifyWebhook(guild) {
         ],
       }),
       headers: { 'Content-Type': 'application/json' },
-    })
+    }).catch(err => console.error('Failed to send webhook notification', err))
   }
-  return
 }

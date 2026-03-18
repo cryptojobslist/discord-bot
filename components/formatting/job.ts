@@ -2,10 +2,10 @@ import { Job } from 'types'
 import _compact from 'lodash/compact'
 
 function isRemote(job: Job): boolean {
-  if (typeof job.remote === 'undefined') {
-    job.remote = /remote|anywhere|distributed|decentralized/gi.test(job.jobLocation + job.jobTitle)
+  if (typeof job.remote !== 'undefined') {
+    return Boolean(job.remote)
   }
-  return Boolean(job.remote)
+  return /remote|anywhere|distributed|decentralized/gi.test((job.jobLocation || '') + (job.jobTitle || ''))
 }
 
 export function salaryRange(job: Job): string {
@@ -33,7 +33,7 @@ export function salaryRangeV2(salary: Job['salary'], salaryRange?: string): stri
     const currency = salary.currency === 'USD' ? '$' : salary.currency || '$'
     return `${currency} ${range.join('-')}${k}`
   }
-  if (salaryRange?.length! > 1) return salaryRange! || ''
+  if (salaryRange && salaryRange.length > 1) return salaryRange
   return ''
 }
 
