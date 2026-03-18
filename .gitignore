@@ -1,4 +1,7 @@
 build
+.claude/
+dump/
+package-lock.json
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
