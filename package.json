@@ -31,7 +31,7 @@
     "rimraf": "^3.0.2",
     "rollbar": "^2.26.5",
     "ts-mongoose": "^0.0.24",
-    "typescript": "^4.7.4"
+    "typescript": "^4.9.5"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.18.6",
@@ -58,7 +58,7 @@
     "lodash": "^4.17.23"
   },
   "engines": {
-    "node": ">=16.x"
+    "node": ">=18"
   },
   "jest": {
     "verbose": true,
