@@ -1,5 +1,6 @@
 import { Job } from 'types'
 import { Client, TextChannel } from 'discord.js'
+import * as Sentry from '@sentry/node'
 import GuildModel from '../models/Guild'
 import FormatJobMessage from './formatting/job'
 import GetDefaultChannel from './getDefaultChannel'
@@ -51,6 +52,7 @@ export default async function PromoteNewJob(_job: Job, client: Client) {
       )
     } catch (err) {
       console.error(`Error sending job to ${guild.name} (${guild.id}) Channel: ${textChannel.id}`, err)
+      Sentry.captureException(err)
     }
   }
 

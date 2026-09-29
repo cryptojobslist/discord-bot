@@ -28,6 +28,16 @@
 - No other features. Super simple!
 - PRs and suggestions are welcome 😅
 
+## Error monitoring
+
+The bot reports errors to Sentry when `SENTRY_DSN` is set. Add the DSN to your deployment's private environment
+variables, or to a local `.env` file copied from `.env.example`. You can optionally set `SENTRY_ENVIRONMENT` to label
+events; otherwise the bot uses `NODE_ENV`. Leave `SENTRY_DSN` unset to disable Sentry.
+
+Do not commit a real DSN or other credentials. `.env` and `.env.production` are ignored by Git. The bot omits request
+data and breadcrumbs from Sentry errors because the `/channels` route receives an admin secret in its query string.
+Existing Rollbar reporting remains available through `ROLLBAR_TOKEN`.
+
 
 ## How do add to your Server
 1. Use [this link](https://cryptojobslist.com/go/discord-bot) or [this one](https://discord.com/oauth2/authorize?client_id=458880791573954570&permissions=2147485696&scope=bot) to add to your server.

@@ -1,4 +1,5 @@
 import { Client, Guild } from 'discord.js'
+import * as Sentry from '@sentry/node'
 
 export default async function DMAdmin(client: Client, guild: Guild, message?: string) {
   try {
@@ -20,5 +21,6 @@ export default async function DMAdmin(client: Client, guild: Guild, message?: st
     console.warn(`DMed to admin of ${guild.name}`)
   } catch (err) {
     console.error(`Failed to DM admins of ${guild.name}`, err)
+    Sentry.captureException(err)
   }
 }

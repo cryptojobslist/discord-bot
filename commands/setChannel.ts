@@ -1,4 +1,5 @@
 import { CommandInteraction, Permissions } from 'discord.js'
+import * as Sentry from '@sentry/node'
 import GuildModel from '../models/Guild'
 
 export default {
@@ -29,6 +30,7 @@ export default {
         )
         return
       } catch (err) {
+        Sentry.captureException(err)
         return await interaction.reply(
           `❌ Ooops. Please give me permission to **Send Messages** in <#${channelId}> and try again!`
         )

@@ -4,10 +4,10 @@
   "version": "1.1.0",
   "author": "ksaitor",
   "license": "UNLICENSED",
-  "main": "index.ts",
+  "main": "build/bootstrap.js",
   "scripts": {
-    "start": "node build/index.js",
-    "start:dev": "ts-node index.ts",
+    "start": "node build/bootstrap.js",
+    "start:dev": "ts-node bootstrap.ts",
     "dev": "nodemon",
     "build": "rimraf ./build && tsc",
     "postinstall": "tsc",
@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@discordjs/rest": "^0.5.0",
+    "@sentry/node": "10.75.3",
     "body-parser": "^1.20.4",
     "discord-api-types": "^0.36.1",
     "discord.js": "^13.17.1",

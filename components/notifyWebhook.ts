@@ -1,4 +1,5 @@
 import fetch from 'node-fetch'
+import * as Sentry from '@sentry/node'
 import { Guild } from 'discord.js'
 
 export default async function notifyWebhook(guild: Guild) {
@@ -30,6 +31,9 @@ export default async function notifyWebhook(guild: Guild) {
         ],
       }),
       headers: { 'Content-Type': 'application/json' },
-    }).catch(err => console.error('Failed to send webhook notification', err))
+    }).catch(err => {
+      console.error('Failed to send webhook notification', err)
+      Sentry.captureException(err)
+    })
   }
 }
