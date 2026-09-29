@@ -38,6 +38,24 @@ Do not commit a real DSN or other credentials. `.env` and `.env.production` are 
 data and breadcrumbs from Sentry errors because the `/channels` route receives an admin secret in its query string.
 Existing Rollbar reporting remains available through `ROLLBAR_TOKEN`.
 
+## Slash command deployment
+
+`/set-channel` and `/help` are global application commands. A normal production deploy registers them automatically
+when the bot becomes ready; no separate command-deployment step is required.
+
+Global command updates may take time to appear. Discord performs read repair when a user invokes a stale command. This
+deployment runs during bot startup, so restarts and new guild joins do not create guild-scoped commands.
+Each command is upserted independently, preserving unrelated global application commands.
+
+### Automatic legacy guild-command migration
+
+Older deployments created guild-scoped copies of `/set-channel` and `/help`. After global registration succeeds, the
+bot removes those copies in the background. It deletes only chat-input commands with those names, preserving unrelated
+guild commands, including user and message commands with the same names. Migration progress is stored per guild,
+application ID, and migration version in MongoDB, so completed and skipped guilds are not rescanned after restarts.
+Missing Access and Unknown Guild results are recorded as skipped; unexpected failures are reported to Sentry and retried
+on a later startup. A re-added guild retries a prior skipped migration.
+
 
 ## How do add to your Server
 1. Use [this link](https://cryptojobslist.com/go/discord-bot) or [this one](https://discord.com/oauth2/authorize?client_id=458880791573954570&permissions=2147485696&scope=bot) to add to your server.

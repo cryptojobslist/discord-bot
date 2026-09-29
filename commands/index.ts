@@ -1,22 +1,23 @@
-import { Client, Guild } from 'discord.js'
+import { Client } from 'discord.js'
 import * as Sentry from '@sentry/node';
 import SetChannel from './setChannel'
 import Help from './help'
 import _find from 'lodash/find'
 
-const commands = [SetChannel, Help]
+export const commands = [SetChannel, Help]
 
-export default async function Init(bot: Client) {
-  const guilds = bot.guilds.cache.values()
-  console.log(`Registering commands in ${bot.guilds.cache.size} guilds...`)
+export function getCommandDefinitions() {
+  return commands
+    .filter(command => command.name && command.fn)
+    .map(command => ({
+      name: command.name,
+      description: command.description,
+      options: (command as any).options || [],
+      dm_permission: false,
+    }))
+}
 
-  for (const guild of guilds) {
-    await RegisterCommandsInAGuild(guild).catch(err => {
-      console.error('Error registering commands in guild', guild.id, err)
-      Sentry.captureException(err);
-    });
-  }
-
+export default function AttachCommandHandler(bot: Client) {
   bot.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return
 
@@ -30,22 +31,4 @@ export default async function Init(bot: Client) {
       await interaction.reply(`Something went wrong. Please contact our support.`)
     }
   })
-
-  console.log('Commands registered.')
-}
-
-export async function RegisterCommandsInAGuild(guild: Guild) {
-  for (const command of commands) {
-    if (!command.name || !command.fn) continue
-    await guild.commands
-      ?.create({
-        name: command.name,
-        description: command.description,
-        options: (command as any).options || null,
-      })
-      .catch(err => {
-        console.error('Error registering command', command.name, err)
-        Sentry.captureException(err);
-      });
-  }
 }

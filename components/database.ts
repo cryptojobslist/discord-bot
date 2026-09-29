@@ -2,6 +2,8 @@ import mongoose from 'mongoose'
 import * as Sentry from '@sentry/node';
 declare const process: any
 
+mongoose.set('strictQuery', true)
+
 async function dbConnect() {
   // check if we have a connection to the database or if it's currently
   // connecting or disconnecting (readyState 1, 2 and 3)

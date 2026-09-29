@@ -9,6 +9,7 @@ const GuildSchema = createSchema(
     members: Type.number(),
     guildName: Type.string(),
     guildURL: Type.string(),
+    legacyGuildCommandMigration: Type.mixed(),
   },
   { timestamps: true, collection: 'guild' }
 )
