@@ -9,10 +9,10 @@ import WelcomeMessage from './components/formatting/welcome'
 import notifyWebhook from './components/notifyWebhook'
 import guildsTable from './components/guildsTable'
 import badgeN from './components/badgen'
-import AttachCommandHandler from './commands/index'
-import DMAdmin from './components/dmAdminThatBotIsNotWellConfigured'
-import registerGlobalCommands from './components/registerCommands'
-import { migrateLegacyGuildCommands, migrateLegacyGuildCommandsForGuild } from './components/migrateLegacyGuildCommands'
+import AttachCommandHandler from './commands/index';
+import DMAdmin from './components/dmAdminThatBotIsNotWellConfigured';
+import registerGlobalCommands from './components/registerCommands';
+import { migrateLegacyGuildCommands, migrateLegacyGuildCommandsForGuild } from './components/migrateLegacyGuildCommands';
 
 import Rollbar from 'rollbar'
 if (process.env.ROLLBAR_TOKEN) {
@@ -37,8 +37,8 @@ export default async function main() {
   await dbConnect
   try {
     const bot = new DiscordClient({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] })
-    let globalCommandsRegistered = false
-    AttachCommandHandler(bot)
+    let globalCommandsRegistered = false;
+    AttachCommandHandler(bot);
     bot.on('error', err => {
       console.error('Discord client error', err)
       Sentry.captureException(err);
@@ -76,13 +76,13 @@ export default async function main() {
 
     bot.on('ready', async () => {
       console.log(`Logged in as ${bot.user!.tag}!`)
-      globalCommandsRegistered = false
+      globalCommandsRegistered = false;
       try {
-        await registerGlobalCommands()
-        globalCommandsRegistered = true
+        await registerGlobalCommands();
+        globalCommandsRegistered = true;
       } catch (err) {
-        console.error('Global command deployment failed; legacy guild commands will not be migrated.', err)
-        Sentry.captureException(err)
+        console.error('Global command deployment failed; legacy guild commands will not be migrated.', err);
+        Sentry.captureException(err);
       }
 
       let totalAudience = 0
@@ -112,9 +112,9 @@ export default async function main() {
 
       if (globalCommandsRegistered) {
         migrateLegacyGuildCommands(bot).catch(err => {
-          console.error('Guild command migration stopped unexpectedly.', err)
-          Sentry.captureException(err)
-        })
+          console.error('Guild command migration stopped unexpectedly.', err);
+          Sentry.captureException(err);
+        });
       }
     })
 
@@ -122,8 +122,8 @@ export default async function main() {
       console.log(`Guild created: ${guild.name} (${guild.memberCount})`)
       if (globalCommandsRegistered) {
         migrateLegacyGuildCommandsForGuild(guild, true).catch(err => {
-          console.error(`Guild command migration failed after guild create: guild=${guild.id}`, err)
-        })
+          console.error(`Guild command migration failed after guild create: guild=${guild.id}`, err);
+        });
       }
       await notifyWebhook(guild)
       const defaultChannel = await GetDefaultChannel(guild)
@@ -136,8 +136,8 @@ export default async function main() {
       }
     })
     bot.on('guildDelete', (guild: Guild) => {
-      console.log(`Guild deleted: id=${guild.id} available=${guild.available}${guild.name ? ` name=${guild.name}` : ''}`)
-    })
+      console.log(`Guild deleted: id=${guild.id} available=${guild.available}${guild.name ? ` name=${guild.name}` : ''}`);
+    });
 
     console.log('Discord login: STARTING...')
     bot

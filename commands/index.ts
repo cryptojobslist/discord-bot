@@ -1,10 +1,10 @@
-import { Client } from 'discord.js'
+import { Client } from 'discord.js';
 import * as Sentry from '@sentry/node';
 import SetChannel from './setChannel'
 import Help from './help'
 import _find from 'lodash/find'
 
-export const commands = [SetChannel, Help]
+export const commands = [SetChannel, Help];
 
 export function getCommandDefinitions() {
   return commands
@@ -14,7 +14,7 @@ export function getCommandDefinitions() {
       description: command.description,
       options: (command as any).options || [],
       dm_permission: false,
-    }))
+    }));
 }
 
 export default function AttachCommandHandler(bot: Client) {
