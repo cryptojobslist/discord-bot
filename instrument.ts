@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/node';
 
 if (process.env.SENTRY_DSN) {
   Sentry.init({
@@ -16,9 +16,10 @@ if (process.env.SENTRY_DSN) {
     },
     beforeSend(event) {
       // /channels accepts an admin secret in the URL. Never send request data to Sentry.
-      delete event.request
-      delete event.breadcrumbs
-      return event
+      const sanitizedEvent = { ...event };
+      delete sanitizedEvent.request;
+      delete sanitizedEvent.breadcrumbs;
+      return sanitizedEvent;
     },
-  })
+  });
 }

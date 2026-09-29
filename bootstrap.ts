@@ -1,3 +1,3 @@
-require('dotenv').config()
-require('./instrument')
-require('./index')
+import 'dotenv/config';
+import './instrument';
+import './index';

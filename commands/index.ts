@@ -1,5 +1,5 @@
 import { Client, Guild } from 'discord.js'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/node';
 import SetChannel from './setChannel'
 import Help from './help'
 import _find from 'lodash/find'
@@ -13,8 +13,8 @@ export default async function Init(bot: Client) {
   for (const guild of guilds) {
     await RegisterCommandsInAGuild(guild).catch(err => {
       console.error('Error registering commands in guild', guild.id, err)
-      Sentry.captureException(err)
-    })
+      Sentry.captureException(err);
+    });
   }
 
   bot.on('interactionCreate', async interaction => {
@@ -26,7 +26,7 @@ export default async function Init(bot: Client) {
       await interaction.reply(`Not sure I understood you.`)
     } catch (err) {
       console.error('Error responding to a command', err)
-      Sentry.captureException(err)
+      Sentry.captureException(err);
       await interaction.reply(`Something went wrong. Please contact our support.`)
     }
   })
@@ -45,7 +45,7 @@ export async function RegisterCommandsInAGuild(guild: Guild) {
       })
       .catch(err => {
         console.error('Error registering command', command.name, err)
-        Sentry.captureException(err)
-      })
+        Sentry.captureException(err);
+      });
   }
 }

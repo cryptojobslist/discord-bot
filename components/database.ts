@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/node';
 declare const process: any
 
 async function dbConnect() {
@@ -19,7 +19,7 @@ async function dbConnect() {
     })
     .catch(err => {
       console.error(`Couldn't connect to database`, err)
-      Sentry.captureException(err)
+      Sentry.captureException(err);
       return undefined
     })
 }

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/node';
 import { Client, Guild, TextChannel } from 'discord.js'
 import GuildModel from '../models/Guild'
 
@@ -21,7 +21,7 @@ export default async function guildsTable(req: Request, res: Response, client: C
           ((await client.channels.cache.get(guildConfig?.channelId)) as TextChannel) || GetDefaultChannel(guild)
         guild.channelName = currentChannel?.name || 'UNDEFINED'
       } catch (err) {
-        Sentry.captureException(err)
+        Sentry.captureException(err);
         guild.channelName = 'UNDEFINED'
       }
       return guild

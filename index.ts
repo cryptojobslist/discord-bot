@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/node';
 import { Client as DiscordClient, Intents, TextChannel, Guild } from 'discord.js'
 import dbConnect from './components/database'
 import GuildModel from './models/Guild'
@@ -37,8 +37,8 @@ export default async function main() {
     const bot = new DiscordClient({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] })
     bot.on('error', err => {
       console.error('Discord client error', err)
-      Sentry.captureException(err)
-    })
+      Sentry.captureException(err);
+    });
 
     bot.on('messageCreate', async message => {
       if (
@@ -55,7 +55,7 @@ export default async function main() {
             await GuildModel.updateOne({ id: guildId }, { channelId }, { new: true, upsert: true })
             message.reply(`✅ I'll now be sharing latest jobs in <#${channelId}> only.`)
           } catch (err) {
-            Sentry.captureException(err)
+            Sentry.captureException(err);
             message.reply(`❌ Ooops. Please give me permission to **Send Messages** in <#${channelId}> and try again!`)
           }
         } else {
@@ -79,7 +79,7 @@ export default async function main() {
       while (true) {
         const batch = (await bot.guilds.fetch(after ? { limit: 200, after } : { limit: 200 }).catch(err => {
           console.error(err)
-          Sentry.captureException(err)
+          Sentry.captureException(err);
         })) as
           | Map<string, Guild>
           | undefined
@@ -120,55 +120,55 @@ export default async function main() {
       .login(process.env.BOT_TOKEN)
       .catch(err => {
         console.error('Discord login: ERROR', err)
-        Sentry.captureException(err)
+        Sentry.captureException(err);
       })
       .then(() => {
         console.log('Discord login: DONE')
-      })
+      });
 
     server.all('/new-job', (req, res) => {
       const newJob = { ...req.body, ...req.query }
       PromoteNewJob(newJob, bot).catch(err => {
         console.error('Failed to promote new job', err)
-        Sentry.captureException(err)
-      })
+        Sentry.captureException(err);
+      });
       res.status(200).send(newJob)
     })
 
     server.all('/', (req, res) => res.status(200).send('OK'))
     server.all('/_health', (req, res) => res.status(200).send('OK'))
 
-    server.all('/channels', (req, res) =>
+    server.all('/channels', (req, res) => {
       guildsTable(req, res, bot).catch(err => {
-        console.error('Failed to load channels', err)
-        Sentry.captureException(err)
-        if (!res.headersSent) res.status(500).send('Internal Server Error')
-      })
-    )
-    server.all('/badgen/:type', (req, res) =>
+        console.error('Failed to load channels', err);
+        Sentry.captureException(err);
+        if (!res.headersSent) res.status(500).send('Internal Server Error');
+      });
+    });
+    server.all('/badgen/:type', (req, res) => {
       badgeN(req, res, bot).catch(err => {
-        console.error('Failed to load badge', err)
-        Sentry.captureException(err)
-        if (!res.headersSent) res.status(500).send('Internal Server Error')
-      })
-    )
+        console.error('Failed to load badge', err);
+        Sentry.captureException(err);
+        if (!res.headersSent) res.status(500).send('Internal Server Error');
+      });
+    });
 
-    if (process.env.SENTRY_DSN) Sentry.setupExpressErrorHandler(server)
+    if (process.env.SENTRY_DSN) Sentry.setupExpressErrorHandler(server);
 
     const serverInstance = server.listen(PORT, () => console.log(`Server started on ${PORT}.`))
 
     async function graceFullShutDown() {
       serverInstance.close(() => console.warn('HTTP server closed'))
       await bot.destroy()
-      await Sentry.flush(2000)
+      await Sentry.flush(2000);
       process.exit(0)
     }
     process.on('SIGTERM', graceFullShutDown)
     process.on('SIGINT', graceFullShutDown)
   } catch (err) {
     console.error(`Couldn't start`, err)
-    Sentry.captureException(err)
-    await Sentry.flush(2000)
+    Sentry.captureException(err);
+    await Sentry.flush(2000);
     process.exit(1)
   }
 }
