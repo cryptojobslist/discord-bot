@@ -11,7 +11,7 @@ import guildsTable from './components/guildsTable'
 import badgeN from './components/badgen'
 import AttachCommandHandler from './commands/index'
 import DMAdmin from './components/dmAdminThatBotIsNotWellConfigured'
-import { registerGlobalCommands } from './components/registerCommands'
+import registerGlobalCommands from './components/registerCommands'
 import { migrateLegacyGuildCommands, migrateLegacyGuildCommandsForGuild } from './components/migrateLegacyGuildCommands'
 
 import Rollbar from 'rollbar'

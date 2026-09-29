@@ -131,8 +131,9 @@ export async function migrateLegacyGuildCommands(bot: Client) {
   let failures = 0
   let commandsDeleted = 0
   let after: string | undefined
+  let hasMoreGuilds = true
 
-  while (true) {
+  while (hasMoreGuilds) {
     const guilds = await bot.guilds.fetch(after ? { limit: 200, after } : { limit: 200 })
     for (const guild of guilds.values()) {
       scanned += 1
@@ -148,8 +149,8 @@ export async function migrateLegacyGuildCommands(bot: Client) {
       }
     }
 
-    if (guilds.size < 200) break
-    after = [...guilds.keys()].pop()
+    hasMoreGuilds = guilds.size === 200
+    if (hasMoreGuilds) after = [...guilds.keys()].pop()
   }
 
   console.log(
