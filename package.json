@@ -9,8 +9,7 @@
     "start": "node build/bootstrap.js",
     "start:dev": "ts-node bootstrap.ts",
     "dev": "nodemon",
-    "build": "rimraf ./build && tsc",
-    "postinstall": "tsc",
+    "build": "node scripts/build.js",
     "lint": "eslint . --ext .ts",
     "test": "jest"
   },

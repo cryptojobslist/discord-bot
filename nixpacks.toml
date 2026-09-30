@@ -1,0 +1,8 @@
+[phases.install]
+# Keep dependency installation cached when only application source changes.
+onlyIncludeFiles = ["package.json", "yarn.lock"]
+cacheDirectories = ["/usr/local/share/.cache/yarn/v6"]
+
+[phases.build]
+# Persist TypeScript's incremental state across deployments.
+cacheDirectories = ["node_modules/.cache"]
