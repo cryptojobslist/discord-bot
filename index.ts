@@ -132,7 +132,7 @@ export default async function main() {
         console.log(`Welcome message sent: ${guild.name} (${guild.memberCount})`)
       } else {
         await DMAdmin(bot, guild)
-        console.warn(`No default channel found: ${guild.name} (${guild.memberCount})`, guild)
+        console.warn(`No default channel found: ${guild.name} (${guild.id}), members=${guild.memberCount}`)
       }
     })
     bot.on('guildDelete', (guild: Guild) => {

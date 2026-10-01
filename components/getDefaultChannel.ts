@@ -1,21 +1,26 @@
-import { Guild, Permissions, TextChannel } from 'discord.js'
+import { Guild, GuildBasedChannel, NewsChannel, Permissions, TextChannel } from 'discord.js'
 
-export default function (guild: Guild): TextChannel | undefined {
-  const ChannelsWithPermissions = guild.channels.cache
-    .filter(
-      channel =>
-        ['GUILD_TEXT', 'GUILD_NEWS', 'text'].includes(channel.type) &&
-        channel.permissionsFor(guild.me as any).has([Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.VIEW_CHANNEL])
-    )
-    .sort((a: any, b: any) => a.rawPosition - b.rawPosition || a.id - b.id)
+export function canSendJobMessages(channel: GuildBasedChannel | null | undefined): channel is TextChannel | NewsChannel {
+  if (!channel || (channel.type !== 'GUILD_TEXT' && channel.type !== 'GUILD_NEWS')) return false
+  const member = channel.guild.members.me
+  return !!member && !!channel.permissionsFor(member)?.has([
+    Permissions.FLAGS.VIEW_CHANNEL,
+    Permissions.FLAGS.SEND_MESSAGES,
+  ])
+}
 
-  const guessJobsChannel = ChannelsWithPermissions.find(c => {
-    return /job|career|work|opportunit/gi.test(c.name)
-  }) as TextChannel
+export function getJobChannels(channels: Iterable<GuildBasedChannel | null>): (TextChannel | NewsChannel)[] {
+  const priority = (channel: TextChannel | NewsChannel) => {
+    if (/job|career|work|opportunit/i.test(channel.name)) return 0
+    if (/general|welcome/i.test(channel.name)) return 1
+    return 2
+  }
 
-  const generalOrWelcome = ChannelsWithPermissions.find(c => {
-    return /general|welcome/gi.test(c.name)
-  }) as TextChannel
+  return [...channels]
+    .filter(canSendJobMessages)
+    .sort((a, b) => priority(a) - priority(b) || a.rawPosition - b.rawPosition || a.id.localeCompare(b.id))
+}
 
-  return guessJobsChannel || generalOrWelcome || (ChannelsWithPermissions.first() as TextChannel | undefined)
+export default function (guild: Guild): TextChannel | NewsChannel | undefined {
+  return getJobChannels(guild.channels.cache.values())[0]
 }

@@ -1,4 +1,4 @@
-import { Client, Guild } from 'discord.js'
+import { Client, DiscordAPIError, Guild } from 'discord.js'
 import * as Sentry from '@sentry/node';
 
 export default async function DMAdmin(client: Client, guild: Guild, message?: string) {
@@ -20,6 +20,10 @@ export default async function DMAdmin(client: Client, guild: Guild, message?: st
     )
     console.warn(`DMed to admin of ${guild.name}`)
   } catch (err) {
+    if (err instanceof DiscordAPIError && err.code === 50007) {
+      console.warn(`Cannot DM owner of ${guild.name} (${guild.id}): Discord does not allow messages to this user.`)
+      return
+    }
     console.error(`Failed to DM admins of ${guild.name}`, err)
     Sentry.captureException(err);
   }
