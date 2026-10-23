@@ -34,10 +34,12 @@ Use Node.js 22.23.4 or a newer 22.x patch release. The minimum includes the
 [October 2026 Node.js security fixes](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases).
 `.node-version` selects 22.23.4 locally, and `package.json` declares the supported range.
 
-Nixpacks selects a Node.js major version from `engines.node`; its Nix package snapshot determines the patch version.
-Ensure any Coolify `NIXPACKS_NODE_VERSION` override is set to `22`, and use a builder/package snapshot that provides
-22.23.4 or newer. Rebuild and redeploy, then confirm `node --version` inside the running container before treating
-production as patched. Do not bypass Yarn's engine check if the builder supplies an older runtime.
+`nixpacks.toml` installs the official Node.js 22.23.4 Linux binary with a pinned SHA-256 checksum,
+and puts `/opt/node/bin` on the build and runtime path. This avoids the older Node patch in Nixpacks'
+package snapshot while retaining Yarn's engine check. Linux x64 and arm64 are supported.
+When upgrading Node, update the download version and checksums in `nixpacks.toml` alongside `.node-version`
+and `engines.node`. Rebuild and redeploy, then confirm `node --version` inside the running container
+before treating production as patched.
 
 ## Error monitoring
 

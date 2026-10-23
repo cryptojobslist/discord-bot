@@ -1,3 +1,22 @@
+[phases.setup]
+# Nixpacks' Node 22 package is older than our required security patch.
+nixPkgs = ["yarn-1_x"]
+aptPkgs = ["curl", "ca-certificates", "libstdc++6"]
+onlyIncludeFiles = []
+paths = ["/opt/node/bin"]
+# Official Node.js release checksums; update these alongside .node-version.
+cmds = ['''set -eu; \
+  case "$(uname -m)" in \
+    x86_64) node_arch=x64; node_sha=b8492284c76a54baf58d61668dd0e41ee0fc98adabf9503d30f05d08f55b4406 ;; \
+    aarch64) node_arch=arm64; node_sha=f7a1e486dbc8b286847815b477d4fb5e9fb963ed4489c3e1588853d685f589f9 ;; \
+    *) echo "Unsupported Node.js architecture" >&2; exit 1 ;; \
+  esac; \
+  curl --fail --show-error --silent --location --retry 3 "https://nodejs.org/dist/v22.23.4/node-v22.23.4-linux-${node_arch}.tar.gz" -o /tmp/node.tar.gz; \
+  echo "${node_sha}  /tmp/node.tar.gz" | sha256sum --check -; \
+  mkdir -p /opt/node; \
+  tar -xzf /tmp/node.tar.gz -C /opt/node --strip-components=1; \
+  rm /tmp/node.tar.gz''']
+
 [phases.install]
 # Keep dependency installation cached when only application source changes.
 onlyIncludeFiles = ["package.json", "yarn.lock"]
