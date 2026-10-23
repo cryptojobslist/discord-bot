@@ -59,7 +59,7 @@
     "lodash": "^4.17.23"
   },
   "engines": {
-    "node": ">=18"
+    "node": "^22.23.4"
   },
   "jest": {
     "verbose": true,

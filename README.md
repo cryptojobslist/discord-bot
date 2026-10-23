@@ -28,6 +28,17 @@
 - No other features. Super simple!
 - PRs and suggestions are welcome 😅
 
+## Node.js runtime
+
+Use Node.js 22.23.4 or a newer 22.x patch release. The minimum includes the
+[October 2026 Node.js security fixes](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases).
+`.node-version` selects 22.23.4 locally, and `package.json` declares the supported range.
+
+Nixpacks selects a Node.js major version from `engines.node`; its Nix package snapshot determines the patch version.
+Ensure any Coolify `NIXPACKS_NODE_VERSION` override is set to `22`, and use a builder/package snapshot that provides
+22.23.4 or newer. Rebuild and redeploy, then confirm `node --version` inside the running container before treating
+production as patched. Do not bypass Yarn's engine check if the builder supplies an older runtime.
+
 ## Error monitoring
 
 The bot reports errors to Sentry when `SENTRY_DSN` is set. Add the DSN to your deployment's private environment
